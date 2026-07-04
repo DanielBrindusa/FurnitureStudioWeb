@@ -7,12 +7,13 @@ import type {
   FurnitureComponentType,
   ValidationResult,
   ValidationSeverity,
+  PlacementFeedback,
 } from '../models/design'
 import { FRAME_HEIGHT_RANGE, FRAME_WIDTH_RANGE } from '../utils/dimensions'
 
 const DRAWER_TYPES = new Set<FurnitureComponentType>(['drawer', 'deep-drawer'])
 const BASKET_TYPES = new Set<FurnitureComponentType>(['wire-basket', 'laundry-basket'])
-const SHELF_TYPES = new Set<FurnitureComponentType>(['shelf', 'shoe-shelf'])
+const SHELF_TYPES = new Set<FurnitureComponentType>(['shelf', 'shoe-shelf', 'angled-shoe-shelf'])
 const STORAGE_VOLUME_TYPES = new Set<FurnitureComponentType>([
   'drawer',
   'deep-drawer',
@@ -20,6 +21,7 @@ const STORAGE_VOLUME_TYPES = new Set<FurnitureComponentType>([
   'laundry-basket',
   'pull-out-tray',
   'accessory-tray',
+  'small-organizer',
 ])
 
 const DEPTH_REQUIREMENTS: Partial<Record<FurnitureComponentType, number>> = {
@@ -30,6 +32,8 @@ const DEPTH_REQUIREMENTS: Partial<Record<FurnitureComponentType, number>> = {
   'accessory-tray': 450,
   'trouser-rail': 450,
   'laundry-basket': 550,
+  'angled-shoe-shelf': 350,
+  'small-organizer': 400,
 }
 
 function makeIssue(
@@ -50,13 +54,53 @@ function makeIssue(
   }
 }
 
-function rectanglesOverlap(a: FurnitureComponent, b: FurnitureComponent): boolean {
+export function rectanglesOverlap(a: FurnitureComponent, b: FurnitureComponent): boolean {
   return (
     a.xMm < b.xMm + b.widthMm &&
     a.xMm + a.widthMm > b.xMm &&
     a.yMm < b.yMm + b.heightMm &&
     a.yMm + a.heightMm > b.yMm
   )
+}
+
+export function evaluateComponentPlacement(
+  frame: Frame,
+  component: FurnitureComponent,
+  ignoredComponentId?: string,
+): PlacementFeedback {
+  const insideFrame = component.xMm >= 18 &&
+    component.yMm >= 18 &&
+    component.widthMm > 0 &&
+    component.heightMm > 0 &&
+    component.xMm + component.widthMm <= frame.widthMm - 18 &&
+    component.yMm + component.heightMm <= frame.heightMm - 18
+
+  if (!insideFrame) return { valid: false, messageKey: 'placement.outOfBounds' }
+
+  const minimumDepth = DEPTH_REQUIREMENTS[component.type]
+  if (component.depthMm > frame.depthMm || (minimumDepth && frame.depthMm < minimumDepth)) {
+    return { valid: false, messageKey: 'placement.needsDeeperFrame' }
+  }
+
+  if (component.type === 'clothes-rail' && component.yMm < 900) {
+    return { valid: false, messageKey: 'placement.railClearance' }
+  }
+
+  if ((component.type === 'led-light-strip' && component.yMm < frame.heightMm - 300) ||
+      (component.type === 'sensor-light' && component.yMm < frame.heightMm - 400)) {
+    return { valid: false, messageKey: 'placement.lightTopZone' }
+  }
+
+  if (component.type === 'handle' || component.type === 'knob') {
+    return { valid: false, messageKey: 'placement.doorHardware' }
+  }
+
+  const collision = frame.components.some((existing) =>
+    existing.id !== ignoredComponentId && rectanglesOverlap(existing, component),
+  )
+  if (collision) return { valid: false, messageKey: 'placement.collision' }
+
+  return { valid: true, messageKey: 'placement.valid' }
 }
 
 function validateFrameDimensions(frame: Frame): ValidationResult[] {
@@ -170,6 +214,8 @@ function validateComponentOverlaps(frame: Frame): ValidationResult[] {
         issues.push(makeIssue('error', 'component.shelf_overlap', first.id, 'validation.shelfOverlap', 'fix.spaceShelves', discriminator))
       } else if (STORAGE_VOLUME_TYPES.has(first.type) && STORAGE_VOLUME_TYPES.has(second.type)) {
         issues.push(makeIssue('error', 'component.overlap', first.id, 'validation.componentOverlap', 'fix.repositionComponents', discriminator))
+      } else {
+        issues.push(makeIssue('error', 'component.overlap', first.id, 'validation.componentOverlap', 'fix.repositionComponents', discriminator))
       }
     }
   }
@@ -187,6 +233,10 @@ function validateDoor(frame: Frame, door: Door): ValidationResult[] {
 
   if (['hinged', 'mirror', 'glass-look', 'flat-panel', 'framed-panel'].includes(door.type) && frame.widthMm < 300) {
     issues.push(makeIssue('error', 'door.hinged_width', door.id, 'validation.hingedDoorWidth', 'fix.increaseFrameWidthOrOpenFront'))
+  }
+
+  if (door.type === 'hinged' && frame.widthMm > 700) {
+    issues.push(makeIssue('warning', 'door.hinged_wide', door.id, 'validation.hingedDoorWide', 'fix.chooseSlidingOrNarrowerDoor'))
   }
 
   if (door.heightMm !== undefined && Math.abs(door.heightMm - frame.heightMm) > 3) {

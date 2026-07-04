@@ -1,49 +1,37 @@
 import { getMaterial } from '../../data/catalog'
+import type { PointerEvent as ReactPointerEvent } from 'react'
 import type { FurnitureComponent } from '../../models/design'
+import { ComponentRenderer } from './ComponentRenderer'
+import { DoorRenderer } from './DoorRenderer'
 import { PanelRenderer } from './PanelRenderer'
 import type { FrameLayout } from './types'
 
 const BOARD_THICKNESS_MM = 18
 
-function ComponentShape({ component, frameHeight, frameX, frameY }: {
-  component: FurnitureComponent
-  frameHeight: number
-  frameX: number
-  frameY: number
-}) {
-  const x = frameX + component.xMm
-  const y = frameY + frameHeight - component.yMm - component.heightMm
-
-  if (component.type === 'clothes-rail' || component.type === 'trouser-rail') {
-    return <line className="rendered-rail" x1={x} x2={x + component.widthMm} y1={y + component.heightMm / 2} y2={y + component.heightMm / 2} />
-  }
-
-  if (component.type === 'led-light-strip' || component.type === 'sensor-light') {
-    return <rect className="rendered-light" x={x} y={y} width={component.widthMm} height={Math.max(component.heightMm, 8)} rx={4} />
-  }
-
-  return (
-    <g className={`rendered-component is-${component.type}`}>
-      <rect x={x} y={y} width={component.widthMm} height={component.heightMm} rx={component.type.includes('drawer') ? 4 : 1} />
-      {component.type.includes('drawer') && (
-        <line x1={x + component.widthMm * 0.36} x2={x + component.widthMm * 0.64} y1={y + 18} y2={y + 18} />
-      )}
-    </g>
-  )
-}
-
 export function FrameView({
   layout,
-  selected,
+  selectedFrame,
+  selectedComponentId,
+  selectedDoorId,
   showDoors,
   orderLabel,
-  onSelect,
+  dropState,
+  onSelectFrame,
+  onSelectComponent,
+  onSelectDoor,
+  onComponentPointerDown,
 }: {
   layout: FrameLayout
-  selected: boolean
+  selectedFrame: boolean
+  selectedComponentId: string | null
+  selectedDoorId: string | null
   showDoors: boolean
   orderLabel: string
-  onSelect: () => void
+  dropState?: 'valid' | 'invalid' | null
+  onSelectFrame: () => void
+  onSelectComponent: (componentId: string) => void
+  onSelectDoor: (doorId: string) => void
+  onComponentPointerDown: (event: ReactPointerEvent<SVGGElement>, component: FurnitureComponent) => void
 }) {
   const { frame, x, y } = layout
   const material = getMaterial(frame.materialId)
@@ -58,19 +46,19 @@ export function FrameView({
 
   return (
     <g
-      className={`frame-view${selected ? ' is-selected' : ''}`}
+      className={`frame-view${selectedFrame ? ' is-selected' : ''}${dropState ? ` is-drop-${dropState}` : ''}`}
       role="button"
       tabIndex={0}
       aria-label={`${frame.name}, ${frame.widthMm} × ${frame.heightMm} × ${frame.depthMm} mm`}
       onPointerDown={(event) => event.stopPropagation()}
       onClick={(event) => {
         event.stopPropagation()
-        onSelect()
+        onSelectFrame()
       }}
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault()
-          onSelect()
+          onSelectFrame()
         }
       }}
     >
@@ -121,17 +109,22 @@ export function FrameView({
 
       <g className="frame-components">
         {frame.components.map((component) => (
-          <ComponentShape key={component.id} component={component} frameHeight={frame.heightMm} frameX={x} frameY={y} />
+          <ComponentRenderer
+            key={component.id}
+            component={component}
+            frameHeight={frame.heightMm}
+            frameX={x}
+            frameY={y}
+            selected={selectedComponentId === component.id}
+            onSelect={() => onSelectComponent(component.id)}
+            onPointerDown={(event) => onComponentPointerDown(event, component)}
+          />
         ))}
       </g>
 
-      {showDoors && frame.showDoors && frame.doors.length > 0 && (
-        <g className="rendered-door">
-          <rect x={x + 4} y={y + 4} width={frame.widthMm - 8} height={frame.heightMm - 8} fill={frame.doors[0]?.mirror ? 'url(#mirror-sheen)' : color} opacity={frame.doors[0]?.mirror ? 0.72 : 0.9} rx={3} />
-          <line x1={x + frame.widthMm / 2} x2={x + frame.widthMm / 2} y1={y + 12} y2={y + frame.heightMm - 12} />
-          <line className="door-handle" x1={x + frame.widthMm * 0.54} x2={x + frame.widthMm * 0.54} y1={y + frame.heightMm * 0.45} y2={y + frame.heightMm * 0.59} />
-        </g>
-      )}
+      {showDoors && frame.showDoors && frame.doors[0] && <DoorRenderer door={frame.doors[0]} frame={frame} x={x} y={y} selected={selectedDoorId === frame.doors[0].id} onSelect={() => onSelectDoor(frame.doors[0]!.id)} />}
+
+      {dropState && <rect className="frame-drop-overlay" x={x + 18} y={y + 18} width={Math.max(0, frame.widthMm - 36)} height={Math.max(0, frame.heightMm - 36)} rx="6" />}
 
       <rect className="frame-hit-outline" x={x - 4} y={y - 4} width={frame.widthMm + 8} height={frame.heightMm + 8} rx={4} />
       <g className="frame-order-badge" transform={`translate(${x + 34} ${y + 34})`}>

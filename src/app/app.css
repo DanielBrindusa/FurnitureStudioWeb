@@ -23,7 +23,7 @@
 .brand-lockup,
 .top-summary,
 .top-actions,
-.placeholder-actions,
+.history-actions,
 .top-progress { display: flex; align-items: center; }
 .brand-lockup { gap: 0.72rem; }
 .brand-lockup > span:last-child { display: grid; }
@@ -54,8 +54,8 @@
 .health-chip.has-errors { background: #f6e0d8; color: #8d3d2b; }
 
 .top-actions { justify-self: end; gap: 0.55rem; }
-.placeholder-actions { gap: 0.28rem; }
-.placeholder-actions button,
+.history-actions { gap: 0.28rem; }
+.history-actions button,
 .language-switch button {
   min-height: 2.35rem;
   padding: 0 0.65rem;
@@ -65,7 +65,8 @@
   font-size: 0.66rem;
   font-weight: 780;
 }
-.placeholder-actions button:disabled { cursor: not-allowed; opacity: 0.52; }
+.history-actions button { cursor: pointer; }
+.history-actions button:disabled { cursor: not-allowed; opacity: 0.38; }
 
 .language-switch { display: flex; padding: 0.16rem; border: 1px solid rgba(36, 45, 40, 0.13); border-radius: 0.55rem; }
 .language-switch button { min-width: 2.45rem; border: 0; background: transparent; cursor: pointer; }
@@ -166,6 +167,27 @@
 .catalog-card-copy em { color: #7e503c; font-size: 0.59rem; font-style: normal; font-weight: 800; }
 .catalog-add { display: grid; width: 1.65rem; height: 1.65rem; place-items: center; border-radius: 50%; background: #e8eee9; color: #2d503f; font-size: 0.9rem; }
 
+.component-catalog { background: #f1eee6; }
+.component-category-tabs { display: flex; gap: 0.3rem; margin: 0 -0.2rem 0.55rem; padding: 0.2rem; overflow-x: auto; scrollbar-width: thin; }
+.component-category-tabs button { min-height: 2rem; padding: 0.35rem 0.55rem; border: 1px solid #d6d2c8; border-radius: 999px; background: #fffdfa; color: #6c706a; cursor: pointer; font-size: 0.56rem; font-weight: 800; white-space: nowrap; }
+.component-category-tabs button[aria-selected='true'] { border-color: var(--forest); background: var(--forest); color: white; }
+.catalog-drag-hint { margin: 0 0 0.55rem; color: var(--muted); font-size: 0.56rem; line-height: 1.4; }
+.catalog-notice { margin: 0 0 0.55rem; padding: 0.5rem 0.6rem; border-radius: 0.45rem; background: #e4ece6; color: #315542; font-size: 0.57rem; line-height: 1.4; }
+.component-catalog-list { display: grid; gap: 0.42rem; }
+.component-catalog-card { position: relative; display: grid; grid-template-columns: 2.5rem 1fr 2rem; align-items: center; gap: 0.55rem; min-height: 4.4rem; padding: 0.5rem 1.7rem 0.5rem 0.5rem; border: 1px solid #dbd7cd; border-radius: 0.68rem; background: #fffdfa; cursor: grab; touch-action: pan-y; transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease; }
+.component-catalog-card:hover { border-color: #9bafa3; box-shadow: 0 0.55rem 1.2rem rgba(43,48,43,.08); transform: translateY(-1px); }
+.component-catalog-card:active { cursor: grabbing; }
+.component-icon { display: grid; width: 2.45rem; height: 2.45rem; place-items: center; border-radius: 0.58rem; background: #e9e4d8; color: #476052; font-size: 1.1rem; font-weight: 800; }
+.component-icon.is-led-light-strip,
+.component-icon.is-sensor-light { background: #fff2c8; color: #9b6d16; box-shadow: 0 0 1rem rgba(239,194,78,.25); }
+.component-card-copy { display: grid; gap: 0.14rem; min-width: 0; }
+.component-card-copy strong { font-size: 0.65rem; }
+.component-card-copy small { color: var(--muted); font-size: 0.53rem; line-height: 1.35; }
+.component-card-copy em { color: #84604d; font-size: 0.52rem; font-style: normal; font-weight: 750; }
+.component-catalog-card > button { display: grid; width: 1.85rem; height: 1.85rem; place-items: center; border: 0; border-radius: 50%; background: #dfe9e2; color: #234b38; cursor: pointer; font-weight: 900; }
+.component-catalog-card > button:disabled { cursor: not-allowed; opacity: .35; }
+.drag-grip { position: absolute; top: 50%; right: 0.35rem; color: #a2a49e; font-size: 0.8rem; transform: translateY(-50%); }
+
 .frame-order-list { display: grid; gap: 0.38rem; }
 .frame-order-list .section-heading { margin-bottom: 0.45rem; }
 .frame-order-list > button {
@@ -234,6 +256,45 @@
 .component-readiness > div { display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 800; }
 .component-readiness p { margin: 0.45rem 0 0; color: var(--muted); font-size: 0.6rem; line-height: 1.45; }
 
+.inspector-block { display: grid; gap: 0.65rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+.mini-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; }
+.mini-heading strong { font-size: 0.72rem; }
+.mini-heading span { color: var(--muted); font-size: 0.52rem; font-weight: 750; text-transform: uppercase; }
+.internal-preset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem; }
+.internal-preset-grid button,
+.inline-confirm button,
+.door-preview-toggle button { min-height: 2.3rem; padding: 0.42rem; border: 1px solid #d6d3ca; border-radius: 0.48rem; background: #fffdfa; cursor: pointer; font-size: 0.56rem; font-weight: 780; }
+.inline-confirm { padding: 0.65rem; border: 1px solid #dfc69e; border-radius: 0.55rem; background: #fff8e9; }
+.inline-confirm p { margin: 0 0 0.55rem; color: #785a28; font-size: 0.59rem; line-height: 1.4; }
+.inline-confirm > div { display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem; }
+.inline-message { margin: 0; color: #3e624e; font-size: 0.59rem; line-height: 1.4; }
+.inline-message.is-error { color: #9a4431; }
+
+.component-inspector { display: grid; gap: 0.75rem; }
+.component-kind-chip { display: flex; align-items: center; gap: 0.45rem; width: fit-content; padding: 0.35rem 0.55rem; border-radius: 999px; background: #e4ebe6; color: #31523f; font-size: 0.57rem; font-weight: 800; }
+.component-position-actions,
+.component-management-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
+.component-position-actions button,
+.component-management-actions button { min-height: 2.55rem; border: 1px solid #d4d3cc; border-radius: 0.52rem; background: #fffdfa; cursor: pointer; font-size: 0.58rem; font-weight: 800; }
+.advanced-controls { padding: 0.65rem; border: 1px solid #dedad1; border-radius: 0.6rem; background: #f3f1eb; }
+.advanced-controls summary { cursor: pointer; font-size: 0.63rem; font-weight: 850; }
+.component-dimension-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.45rem; margin: 0.65rem 0; }
+.compact-number-field { display: grid; gap: 0.25rem; color: var(--muted); font-size: 0.54rem; font-weight: 750; }
+.compact-number-field > span:last-child { position: relative; }
+.compact-number-field input { width: 100%; height: 2.3rem; padding: 0 1.8rem 0 0.5rem; border: 1px solid #d5d2c9; border-radius: 0.45rem; background: #fffdfa; font-size: 0.67rem; font-weight: 750; }
+.compact-number-field i { position: absolute; right: 0.45rem; top: 50%; color: #959891; font-size: 0.5rem; font-style: normal; transform: translateY(-50%); }
+.component-compatibility { padding: 0.6rem; border-left: 3px solid #c59243; background: #f7f0df; }
+.component-compatibility strong { font-size: 0.58rem; }
+.component-compatibility p { margin: 0.35rem 0 0; color: #79582a; font-size: 0.56rem; line-height: 1.4; }
+.component-compatibility p.is-error { color: #9a3f2d; }
+.component-price-line { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem; border-radius: 0.5rem; background: #e9ece7; font-size: 0.62rem; }
+
+.door-option-grid { display: grid; gap: 0.35rem; }
+.door-option-grid label { display: flex; align-items: center; gap: 0.45rem; min-height: 2.2rem; padding: 0.4rem 0.55rem; border: 1px solid #ddd9d0; border-radius: 0.48rem; background: #fffdfa; font-size: 0.57rem; font-weight: 750; }
+.door-option-grid input { accent-color: var(--forest); }
+.door-preview-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem; }
+.door-preview-toggle button.is-active { border-color: var(--forest); background: var(--forest); color: white; }
+
 .live-summary { display: grid; gap: 0.85rem; }
 .summary-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 0.45rem; }
 .summary-metrics div { display: grid; gap: 0.2rem; min-height: 3.65rem; padding: 0.58rem; border: 1px solid #dfdbd1; border-radius: 0.55rem; background: #fffdfa; }
@@ -249,6 +310,10 @@
 .validation-item > span { width: 0.4rem; height: 0.4rem; margin-top: 0.22rem; border-radius: 50%; background: #c18a3d; }
 .validation-item.is-error > span { background: #ae4b36; }
 .fictional-price-note { color: var(--muted); font-size: 0.54rem; }
+.price-breakdown { display: grid; gap: 0.32rem; padding: 0.65rem; border: 1px solid #dedad0; border-radius: 0.58rem; background: #fffdfa; }
+.price-breakdown div { display: flex; justify-content: space-between; gap: 1rem; color: var(--muted); font-size: 0.56rem; }
+.price-breakdown strong { color: var(--ink); }
+.price-breakdown .is-total { margin-top: 0.3rem; padding-top: 0.45rem; border-top: 1px solid var(--line); color: var(--ink); font-size: 0.64rem; font-weight: 850; }
 
 .mobile-panel-tabs { display: none; }
 
@@ -256,13 +321,13 @@
   .designer-topbar { grid-template-columns: 1fr auto auto; }
   .top-progress { display: none; }
   .designer-grid { grid-template-columns: 17rem minmax(24rem, 1fr) 20rem; }
-  .placeholder-actions button:nth-child(2) { display: none; }
+  .history-actions button { padding-inline: 0.48rem; }
 }
 
 @media (max-width: 900px) {
   .designer-topbar { grid-template-columns: 1fr auto; min-height: 4.4rem; }
   .top-summary { grid-column: 1 / -1; grid-row: 2; justify-content: space-between; padding-top: 0.45rem; }
-  .placeholder-actions { display: none; }
+  .history-actions { display: none; }
   .brand-lockup small { display: none; }
   .mobile-panel-tabs {
     position: sticky;
@@ -282,6 +347,7 @@
   .side-panel.is-mobile-open { display: block; }
   .inspector-panel .is-mobile-hidden { display: none; }
   .catalog-list { grid-template-columns: 1fr 1fr; }
+  .component-catalog-list { grid-template-columns: 1fr 1fr; }
   .catalog-panel,
   .inspector-panel { overflow: visible; }
 }
@@ -292,6 +358,7 @@
   .brand-mark { width: 2.3rem; height: 2.3rem; }
   .mobile-panel-tabs { top: 6.55rem; }
   .catalog-list { grid-template-columns: 1fr; }
+  .component-catalog-list { grid-template-columns: 1fr; }
   .dimension-form.compact,
   .select-grid { grid-template-columns: 1fr; }
   .summary-metrics { grid-template-columns: 1fr 1fr; }

@@ -1,6 +1,10 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { ComponentCatalogPanel } from '../components/ComponentCatalogPanel'
+import { ComponentInspector } from '../components/ComponentInspector'
+import { DoorConfigurator } from '../components/DoorConfigurator'
 import { DimensionEditor } from '../components/DimensionEditor'
 import { InstallationSetup } from '../components/InstallationSetup'
+import { InternalPresetPanel } from '../components/InternalPresetPanel'
 import { WardrobeCanvas } from '../components/canvas/WardrobeCanvas'
 import { framePresets } from '../data/catalog'
 import { buildFrameFromPreset } from '../data/framePresetFactory'
@@ -17,14 +21,20 @@ export function App() {
   const { state, dispatch } = useDesign()
   const { design, validation, price } = state
   const [mobilePanel, setMobilePanel] = useState<MobilePanel>('catalog')
+  const [activeCatalogItemId, setActiveCatalogItemId] = useState<string | null>(null)
+  const activeCatalogItemRef = useRef<string | null>(null)
   const t = (key: string) => translate(design.language, key)
   const orderedFrames = useMemo(
     () => [...design.frames].sort((a, b) => a.orderIndex - b.orderIndex),
     [design.frames],
   )
-  const selectedFrame = design.selectedItem?.kind === 'frame'
-    ? orderedFrames.find((frame) => frame.id === design.selectedItem?.id) ?? null
-    : null
+  const selectedFrame = orderedFrames.find((frame) =>
+    (design.selectedItem?.kind === 'frame' && frame.id === design.selectedItem.id) ||
+    (design.selectedItem?.kind === 'component' && frame.components.some((component) => component.id === design.selectedItem?.id)) ||
+    (design.selectedItem?.kind === 'door' && frame.doors.some((door) => door.id === design.selectedItem?.id)),
+  ) ?? null
+  const selectedComponent = selectedFrame?.components.find((component) => component.id === design.selectedItem?.id) ?? null
+  const selectedDoor = selectedFrame?.doors.find((door) => door.id === design.selectedItem?.id) ?? null
   const totalWidth = orderedFrames.reduce((sum, frame) => sum + frame.widthMm, 0)
   const maximumHeight = orderedFrames.reduce((max, frame) => Math.max(max, frame.heightMm), 0)
   const maximumDepth = orderedFrames.reduce((max, frame) => Math.max(max, frame.depthMm), 0)
@@ -35,8 +45,10 @@ export function App() {
   const errorCount = validation.filter((issue) => issue.severity === 'error').length
   const warningCount = validation.filter((issue) => issue.severity === 'warning').length
   const frameIssues = selectedFrame
-    ? validation.filter((issue) => issue.targetId === selectedFrame.id || selectedFrame.components.some((component) => component.id === issue.targetId))
+    ? validation.filter((issue) => issue.targetId === selectedFrame.id || selectedFrame.components.some((component) => component.id === issue.targetId) || selectedFrame.doors.some((door) => door.id === issue.targetId))
     : []
+  const componentIssues = selectedComponent ? validation.filter((issue) => issue.targetId === selectedComponent.id) : []
+  const totalComponents = orderedFrames.reduce((sum, frame) => sum + frame.components.length, 0)
 
   const addFrameFromPreset = (preset: CatalogItem) => {
     const frame = buildFrameFromPreset(preset, design.frames.length)
@@ -50,6 +62,40 @@ export function App() {
   }
 
   const updateLanguage = (language: LanguageCode) => dispatch({ type: 'LANGUAGE_UPDATE', language })
+  const beginCatalogDrag = (itemId: string) => {
+    activeCatalogItemRef.current = itemId
+    setActiveCatalogItemId(itemId)
+  }
+  const endCatalogDrag = () => {
+    activeCatalogItemRef.current = null
+    setActiveCatalogItemId(null)
+  }
+
+  useEffect(() => {
+    const handleHistoryKeys = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null
+      if (target?.matches('input, textarea, select')) return
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z') {
+        event.preventDefault()
+        dispatch({ type: event.shiftKey ? 'REDO' : 'UNDO' })
+      } else if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'y') {
+        event.preventDefault()
+        dispatch({ type: 'REDO' })
+      }
+    }
+    window.addEventListener('keydown', handleHistoryKeys)
+    return () => window.removeEventListener('keydown', handleHistoryKeys)
+  }, [dispatch])
+
+  useEffect(() => {
+    const clearPointerDrag = () => window.setTimeout(endCatalogDrag, 0)
+    window.addEventListener('pointerup', clearPointerDrag)
+    window.addEventListener('pointercancel', clearPointerDrag)
+    return () => {
+      window.removeEventListener('pointerup', clearPointerDrag)
+      window.removeEventListener('pointercancel', clearPointerDrag)
+    }
+  })
 
   return (
     <main className="designer-shell">
@@ -78,10 +124,9 @@ export function App() {
         </div>
 
         <div className="top-actions">
-          <div className="placeholder-actions" aria-label={t('save.savedLocally')}>
-            <button type="button" disabled title={t('save.notImplemented')}>{t('button.save')}</button>
-            <button type="button" disabled title={t('save.notImplemented')}>{t('button.load')}</button>
-            <button type="button" disabled title={t('save.notImplemented')}>{t('button.exportJson')}</button>
+          <div className="history-actions" aria-label={t('label.history')}>
+            <button type="button" disabled={state.past.length === 0} onClick={() => dispatch({ type: 'UNDO' })} title="Ctrl+Z">↶ {t('button.undo')}</button>
+            <button type="button" disabled={state.future.length === 0} onClick={() => dispatch({ type: 'REDO' })} title="Ctrl+Y">↷ {t('button.redo')}</button>
           </div>
           <div className="language-switch" aria-label={t('label.language')}>
             <button type="button" aria-pressed={design.language === 'en'} onClick={() => updateLanguage('en')}>EN</button>
@@ -135,6 +180,14 @@ export function App() {
             </div>
           </section>
 
+          <ComponentCatalogPanel
+            frame={selectedFrame}
+            t={t}
+            onDragStart={beginCatalogDrag}
+            onDragEnd={endCatalogDrag}
+            onAdded={() => setMobilePanel('inspector')}
+          />
+
           {orderedFrames.length > 0 && (
             <section className="frame-order-list panel-section">
               <div className="section-heading">
@@ -160,14 +213,20 @@ export function App() {
         </aside>
 
         <section className="canvas-column">
-          <WardrobeCanvas onAddFrame={addDefaultFrame} />
+          <WardrobeCanvas
+            onAddFrame={addDefaultFrame}
+            activeCatalogItemId={activeCatalogItemId}
+            getActiveCatalogItemId={() => activeCatalogItemRef.current}
+            onCatalogDragEnd={endCatalogDrag}
+            onInspectorRequest={() => setMobilePanel('inspector')}
+          />
         </section>
 
         <aside className={`inspector-panel side-panel${mobilePanel === 'inspector' || mobilePanel === 'summary' ? ' is-mobile-open' : ''}`} aria-label={t('panel.inspector')}>
           <section className={`inspector-content${mobilePanel === 'summary' ? ' is-mobile-hidden' : ''}`}>
             <div className="inspector-title">
               <span>{t('label.inspector')}</span>
-              <h2>{selectedFrame ? selectedFrame.name : t('label.selectedFrame')}</h2>
+              <h2>{selectedComponent ? selectedComponent.name : selectedDoor ? t(`door.${selectedDoor.type}`) : selectedFrame ? selectedFrame.name : t('label.selectedFrame')}</h2>
             </div>
 
             {!selectedFrame ? (
@@ -177,16 +236,19 @@ export function App() {
               </div>
             ) : (
               <>
-                <DimensionEditor
-                  frame={selectedFrame}
-                  frameIssues={frameIssues}
-                  isFirst={selectedFrame.orderIndex === 0}
-                  isLast={selectedFrame.orderIndex === orderedFrames.length - 1}
-                />
-                <div className="component-readiness">
-                  <div><span>{t('label.components')}</span><strong>{selectedFrame.components.length}</strong></div>
-                  <p>{selectedFrame.components.length === 0 ? t('empty.selectedFrameNoComponents') : t('empty.noComponents')}</p>
-                </div>
+                {selectedComponent ? (
+                  <ComponentInspector frame={selectedFrame} component={selectedComponent} issues={componentIssues} t={t} />
+                ) : (
+                  <>
+                    {design.selectedItem?.kind !== 'door' && <DimensionEditor frame={selectedFrame} frameIssues={frameIssues} isFirst={selectedFrame.orderIndex === 0} isLast={selectedFrame.orderIndex === orderedFrames.length - 1} />}
+                    <InternalPresetPanel frame={selectedFrame} t={t} />
+                    <DoorConfigurator frame={selectedFrame} issues={frameIssues} t={t} />
+                    <div className="component-readiness">
+                      <div><span>{t('label.components')}</span><strong>{selectedFrame.components.length}</strong></div>
+                      <p>{selectedFrame.components.length === 0 ? t('empty.selectedFrameNoComponents') : t('catalog.dragHint')}</p>
+                    </div>
+                  </>
+                )}
               </>
             )}
           </section>
@@ -199,11 +261,21 @@ export function App() {
 
             <div className="summary-metrics">
               <div><span>{t('summary.frameCount')}</span><strong>{orderedFrames.length}</strong></div>
+              <div><span>{t('summary.componentCount')}</span><strong>{totalComponents}</strong></div>
               <div><span>{t('summary.overallWidth')}</span><strong>{formatDimensionLabel(totalWidth, 'cm')}</strong></div>
               <div><span>{t('summary.maximumHeight')}</span><strong>{formatDimensionLabel(maximumHeight, 'cm')}</strong></div>
               <div><span>{t('summary.maximumDepth')}</span><strong>{formatDimensionLabel(maximumDepth, 'cm')}</strong></div>
               <div className={remainingWidth < 0 ? 'is-error' : ''}><span>{t('summary.remainingWidth')}</span><strong>{remainingWidth} mm</strong></div>
               <div><span>{t('label.estimatedPrice')}</span><strong>{formatEstimatedPrice(price.total, design.language)}</strong></div>
+            </div>
+
+            <div className="price-breakdown">
+              <div><span>{t('label.framesTotal')}</span><strong>{formatEstimatedPrice(price.frames, design.language)}</strong></div>
+              <div><span>{t('label.doorsTotal')}</span><strong>{formatEstimatedPrice(price.doors, design.language)}</strong></div>
+              <div><span>{t('label.componentsTotal')}</span><strong>{formatEstimatedPrice(price.components, design.language)}</strong></div>
+              <div><span>{t('label.accessoriesTotal')}</span><strong>{formatEstimatedPrice(price.accessories, design.language)}</strong></div>
+              <div><span>{t('label.lightingTotal')}</span><strong>{formatEstimatedPrice(price.lighting, design.language)}</strong></div>
+              <div className="is-total"><span>{t('label.total')}</span><strong>{formatEstimatedPrice(price.total, design.language)}</strong></div>
             </div>
 
             {selectedFrame && (

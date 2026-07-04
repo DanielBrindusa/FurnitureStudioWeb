@@ -21,9 +21,11 @@ export type FurnitureComponentType =
   | 'deep-drawer'
   | 'wire-basket'
   | 'shoe-shelf'
+  | 'angled-shoe-shelf'
   | 'vertical-divider'
   | 'pull-out-tray'
   | 'accessory-tray'
+  | 'small-organizer'
   | 'trouser-rail'
   | 'laundry-basket'
   | 'led-light-strip'
@@ -79,6 +81,7 @@ export interface Door {
   mirror: boolean
   glass: boolean
   softClose: boolean
+  handlePosition: 'left' | 'right' | 'center'
   widthMm?: Millimetres
   heightMm?: Millimetres
 }
@@ -104,6 +107,11 @@ export interface ViewSettings {
   showDoors: boolean
   showIssues: boolean
   zoomPercent: number
+}
+
+export interface PlacementFeedback {
+  valid: boolean
+  messageKey: string
 }
 
 export interface Design {

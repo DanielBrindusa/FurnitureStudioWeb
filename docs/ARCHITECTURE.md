@@ -593,17 +593,23 @@ zoom, pan, fit, and reset controls. The frame set can be built and corrected on
 desktop and mobile. Project launcher, bounded history, and autosave remain the
 next cross-cutting additions.
 
-### Phase 3 — interior builder
+### Phase 3 — interior builder (complete)
 
-Shelves, dividers, rails, drawers, baskets, intent catalog, snap/drop preview,
-numeric and keyboard placement. Exit when collisions and support rules are
-visible and correct across desktop/mobile.
+The delivered builder includes a categorized fictional component catalog,
+pointer/native drag placement with snapped live previews, collision and depth
+feedback, realistic component visuals, selection, precise numeric editing,
+duplicate/delete and 1 cm movement controls, adaptive internal presets, and
+bounded undo/redo. Touch users have equivalent add and movement controls, and the
+flow is verified at 390 px.
 
-### Phase 4 — fronts and finishes
+### Phase 4 — fronts and finishes (core complete)
 
-Door systems, handles, panels, materials, glass/mirror effects, lighting and their
-rules/BOM recipes. Exit when open/closed overlays and derived hardware agree with
-the review data.
+Open, hinged, sliding, double-sliding, mirror, glass-look, flat and framed fronts
+are configurable with material, finish, handle, position, soft-close and
+doors/internals preview controls. SVG rendering includes seams, overlap, mirror,
+glass, handles and shadows. Lighting, accessories, compatibility rules and price
+categories are integrated; full manufacturing BOM recipes remain review-phase
+work.
 
 ### Phase 5 — review and export
 
@@ -618,8 +624,7 @@ review. Exit only when the core flow passes automated and manual acceptance test
 
 ## 20. Immediate next step
 
-Build Phase 3 on the completed frame workspace: add shelves, dividers, rails,
-drawers, and baskets with placement candidates, containment/collision feedback,
-and equivalent pointer, touch, keyboard, and numeric operations. Add local
-project persistence and bounded history before final exports, keep edits on the
-same reducer command path, and retain the validation/pricing test coverage.
+Build Phase 5 on the interactive configurator: add the local project repository,
+autosave and recovery, issue-to-entity navigation, a traceable BOM/price review,
+JSON and safe CSV exports, and a semantic print summary. Keep the existing
+reducer/history path and retain placement, validation and pricing test coverage.

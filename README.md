@@ -10,15 +10,15 @@ store, or clone of any existing furniture planner.
 
 ## Project status
 
-The repository now includes the **Phase 2 interactive frame-builder core**. In
-addition to the technical configurator foundation, users can define an
-installation boundary, start from original frame presets, edit every dimension
-to one-millimetre precision, reorder and duplicate frames, choose materials and
-finishes, and review a live estimate and fit validation on a proportional SVG
-furniture canvas. The workspace is responsive down to a 390 px mobile viewport.
+The repository now includes the **interactive interior and fronts configurator**.
+Users can drag fictional components into frames, move or edit them precisely,
+apply adaptive internal layouts, configure doors, handles, finishes and lighting,
+and see realistic SVG rendering, placement validation, undo/redo, and a live
+category price breakdown. Equivalent add and 1 cm movement controls keep the
+workflow usable with touch and keyboard at a 390 px mobile viewport.
 
-Interior component drag-and-drop, project persistence/history, and final export
-workflows remain intentionally deferred to later phases.
+Local project persistence and final JSON/CSV/print workflows remain deferred to
+the review/export phase.
 
 ## Legal and originality note
 
@@ -138,10 +138,11 @@ contracts, rule processing, storage, exports, testing, and deployment.
 3. **Frame builder** — installation boundary presets, precise frame dimensions,
    proportional SVG elevation, selection, measurements, materials, frame order,
    responsive panels, and live validation/pricing. *(Core slice complete.)*
-4. **Interior builder** — shelves, dividers, rails, drawers, baskets, placement
-   previews, collision checks, keyboard placement.
+4. **Interior builder** — shelves, dividers, rails, drawers, baskets, accessories,
+   adaptive presets, snap previews, collision checks, and accessible movement.
+   *(Complete.)*
 5. **Fronts and finishes** — door systems, handles, panels, material rendering,
-   lighting, compatibility rules.
+   lighting, compatibility rules. *(Core slice complete.)*
 6. **Review and export** — issue center, price breakdown, parts list, JSON/CSV,
    print view, import recovery.
 7. **Hardening** — responsive refinement, accessibility audit, performance,
@@ -172,9 +173,8 @@ that directory on pushes to `main` once GitHub Pages is configured to use
 
 ## Next implementation prompt
 
-Implement the next **interior-builder slice** from `docs/ARCHITECTURE.md`: place
-and edit shelves, dividers, rails, drawers, and baskets inside the completed
-frame canvas, with visible snap candidates, containment/collision feedback, and
-equivalent pointer, touch, keyboard, and numeric controls. Add bounded undo/redo
-and local project persistence before enabling final exports. Preserve the
-existing validation, pricing, i18n, reducer, and SVG renderer contracts.
+Implement the **review, persistence, and export slice** from
+`docs/ARCHITECTURE.md`: versioned local projects with autosave/recovery, issue
+navigation, a traceable price and parts breakdown, JSON/CSV export, and a semantic
+print summary. Preserve the current command history, validation, pricing, i18n,
+responsive controls, and SVG renderer contracts.
