@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Local tooling
+.DS_Store
+Thumbs.db
+*.local
+*.log
+.vite/
+.idea/
+.vscode/
+
+# Test output planned for later phases
+coverage/
+playwright-report/
+test-results/
