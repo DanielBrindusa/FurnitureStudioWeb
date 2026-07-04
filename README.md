@@ -167,6 +167,11 @@ that directory on pushes to `main` once GitHub Pages is configured to use
 
 ## Next implementation prompt
 
+Implement **Phase 1: the design kernel** from `docs/ARCHITECTURE.md`. Add the
+versioned TypeScript model, fictional starter catalog, pure command/validation/
+pricing engines, localStorage repository with migrations, and focused unit tests.
+Do not build drag-and-drop or the full furniture UI yet.
+
 Implement **Phase 2: the interactive frame builder** from
 `docs/ARCHITECTURE.md`. Add project persistence, command history, precise SVG
 front elevation, frame creation/editing, measurements, selection, keyboard
