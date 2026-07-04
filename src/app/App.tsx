@@ -5,6 +5,10 @@ import { DoorConfigurator } from '../components/DoorConfigurator'
 import { DimensionEditor } from '../components/DimensionEditor'
 import { InstallationSetup } from '../components/InstallationSetup'
 import { InternalPresetPanel } from '../components/InternalPresetPanel'
+import { ExportDialog } from '../components/ExportDialog'
+import { PartsList } from '../components/PartsList'
+import { PrintSummary } from '../components/PrintSummary'
+import { SavedProjectsDialog } from '../components/SavedProjectsDialog'
 import { WardrobeCanvas } from '../components/canvas/WardrobeCanvas'
 import { framePresets } from '../data/catalog'
 import { buildFrameFromPreset } from '../data/framePresetFactory'
@@ -12,6 +16,7 @@ import { translate } from '../i18n'
 import type { CatalogItem, LanguageCode } from '../models/design'
 import { formatEstimatedPrice } from '../pricing/priceEngine'
 import { useDesign } from '../state/designState'
+import { projectRepository } from '../storage/projectRepository'
 import { formatDimensionLabel } from '../utils/dimensions'
 import './app.css'
 
@@ -22,6 +27,11 @@ export function App() {
   const { design, validation, price } = state
   const [mobilePanel, setMobilePanel] = useState<MobilePanel>('catalog')
   const [activeCatalogItemId, setActiveCatalogItemId] = useState<string | null>(null)
+  const [projectsOpen, setProjectsOpen] = useState(false)
+  const [exportOpen, setExportOpen] = useState(false)
+  const [printOpen, setPrintOpen] = useState(false)
+  const [lastSavedAt, setLastSavedAt] = useState<string | null>(null)
+  const [storageMessage, setStorageMessage] = useState<string | null>(state.startupErrorKey)
   const activeCatalogItemRef = useRef<string | null>(null)
   const t = (key: string) => translate(design.language, key)
   const orderedFrames = useMemo(
@@ -97,8 +107,19 @@ export function App() {
     }
   })
 
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      const result = projectRepository.saveDraft(design)
+      if (result.ok) { setLastSavedAt(result.value); setStorageMessage(null) }
+      else setStorageMessage(result.errorKey)
+    }, 900)
+    return () => window.clearTimeout(timer)
+  }, [design])
+
   return (
-    <main className="designer-shell">
+    <>
+    <a className="skip-link" href="#designer-workspace">{t('accessibility.skipToDesigner')}</a>
+    <main className="designer-shell" id="designer-workspace">
       <header className="designer-topbar">
         <div className="brand-lockup">
           <span className="brand-mark" aria-hidden="true">FSW</span>
@@ -121,12 +142,18 @@ export function App() {
             {errorCount} {t('label.errors')} · {warningCount} {t('label.warnings')}
           </span>
           <strong>{formatEstimatedPrice(price.total, design.language)}</strong>
+          <small className={storageMessage ? 'save-status has-error' : 'save-status'} role="status">{storageMessage ? t(storageMessage) : lastSavedAt ? `${t('storage.autosaved')} ${new Date(lastSavedAt).toLocaleTimeString(design.language === 'ro' ? 'ro-RO' : 'en-GB', { hour: '2-digit', minute: '2-digit' })}` : t('storage.autosaveWaiting')}</small>
         </div>
 
         <div className="top-actions">
           <div className="history-actions" aria-label={t('label.history')}>
             <button type="button" disabled={state.past.length === 0} onClick={() => dispatch({ type: 'UNDO' })} title="Ctrl+Z">↶ {t('button.undo')}</button>
             <button type="button" disabled={state.future.length === 0} onClick={() => dispatch({ type: 'REDO' })} title="Ctrl+Y">↷ {t('button.redo')}</button>
+          </div>
+          <div className="workspace-actions">
+            <button type="button" onClick={() => setProjectsOpen(true)}>{t('button.projects')}</button>
+            <button type="button" onClick={() => setExportOpen(true)}>{t('button.export')}</button>
+            <button type="button" onClick={() => setPrintOpen(true)}>{t('button.print')}</button>
           </div>
           <div className="language-switch" aria-label={t('label.language')}>
             <button type="button" aria-pressed={design.language === 'en'} onClick={() => updateLanguage('en')}>EN</button>
@@ -297,10 +324,21 @@ export function App() {
               ))}
             </div>
 
+            <PartsList t={t} />
+
             <small className="fictional-price-note">{t('price.fictionalNote')}</small>
           </section>
         </aside>
       </div>
     </main>
+    <nav className="mobile-bottom-actions" aria-label={t('label.projectActions')}>
+      <button type="button" onClick={() => setProjectsOpen(true)}>{t('button.projects')}</button>
+      <button type="button" onClick={() => setExportOpen(true)}>{t('button.export')}</button>
+      <button type="button" onClick={() => setPrintOpen(true)}>{t('button.print')}</button>
+    </nav>
+    <SavedProjectsDialog open={projectsOpen} onClose={() => setProjectsOpen(false)} onSaved={setLastSavedAt} t={t} />
+    <ExportDialog open={exportOpen} onClose={() => setExportOpen(false)} onPrint={() => { setExportOpen(false); setPrintOpen(true) }} t={t} />
+    <PrintSummary open={printOpen} onClose={() => setPrintOpen(false)} t={t} />
+    </>
   )
 }

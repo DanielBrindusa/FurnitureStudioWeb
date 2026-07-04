@@ -21,6 +21,7 @@ import type {
 } from '../models/design'
 import { getPriceBreakdown } from '../pricing/priceEngine'
 import { validateDesign } from '../validation/validationEngine'
+import { projectRepository } from '../storage/projectRepository'
 
 export interface AppState {
   design: Design
@@ -28,12 +29,15 @@ export interface AppState {
   price: PriceBreakdown
   past: Design[]
   future: Design[]
+  startupErrorKey: string | null
 }
 
 type FrameDimensionPatch = Partial<Pick<Frame, 'widthMm' | 'heightMm' | 'depthMm'>>
 
 export type AppAction =
   | { type: 'DESIGN_CREATE' }
+  | { type: 'DESIGN_LOAD'; design: Design }
+  | { type: 'DESIGN_RENAME'; name: string }
   | { type: 'INSTALLATION_UPDATE'; patch: Partial<InstallationSpace> }
   | { type: 'FRAME_ADD'; frame: Frame }
   | { type: 'FRAME_UPDATE_DIMENSIONS'; frameId: string; patch: FrameDimensionPatch }
@@ -62,12 +66,13 @@ export type AppAction =
 const createId = (prefix: string): string =>
   `${prefix}-${globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`}`
 
-const deriveState = (design: Design, past: Design[] = [], future: Design[] = []): AppState => ({
+const deriveState = (design: Design, past: Design[] = [], future: Design[] = [], startupErrorKey: string | null = null): AppState => ({
   design,
   validation: validateDesign(design),
   price: getPriceBreakdown(design),
   past,
   future,
+  startupErrorKey,
 })
 
 const commit = (state: AppState, design: Design): AppState =>
@@ -87,6 +92,12 @@ export function designReducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
     case 'DESIGN_CREATE':
       return deriveState(createDesign(state.design.language))
+
+    case 'DESIGN_LOAD':
+      return deriveState({ ...action.design, selectedItem: null })
+
+    case 'DESIGN_RENAME':
+      return commit(state, touch({ ...state.design, name: action.name.trim() || state.design.name }))
 
     case 'INSTALLATION_UPDATE':
       return commit(state, touch({
@@ -303,7 +314,10 @@ interface DesignContextValue {
 const DesignContext = createContext<DesignContextValue | null>(null)
 
 export function DesignProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(designReducer, undefined, () => deriveState(createDesign()))
+  const [state, dispatch] = useReducer(designReducer, undefined, () => {
+    const draft = projectRepository.loadDraft()
+    return deriveState(draft.ok && draft.value ? draft.value.design : createDesign(), [], [], draft.ok ? null : draft.errorKey)
+  })
   const value = useMemo(() => ({ state, dispatch }), [state])
 
   return <DesignContext.Provider value={value}>{children}</DesignContext.Provider>

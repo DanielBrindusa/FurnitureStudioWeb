@@ -1,6 +1,6 @@
 # FurnitureStudioWeb — Technical architecture
 
-**Status:** Approved direction for phased implementation  
+**Status:** Release-candidate implementation
 **Runtime:** Static browser application on GitHub Pages  
 **Stack:** Vite, React, TypeScript, plain CSS
 
@@ -611,20 +611,25 @@ glass, handles and shadows. Lighting, accessories, compatibility rules and price
 categories are integrated; full manufacturing BOM recipes remain review-phase
 work.
 
-### Phase 5 — review and export
+### Phase 5 — review and export (complete)
 
-Issue center, traceable price, grouped parts, print, polished import/export and
-recovery. Exit when a project can be handed off without opening the builder.
+The release includes debounced local draft autosave, named browser projects,
+load/duplicate/rename/delete operations, versioned and validated JSON transfer,
+spreadsheet-safe CSV, groupable parts review, price categories, and a semantic
+print sheet with a simplified elevation. Storage, quota, corrupted-data, import,
+and download failures have friendly user-facing paths.
 
-### Phase 6 — hardening
+### Phase 6 — hardening (release baseline complete)
 
-Accessibility audit, responsive QA, performance profiling, corrupted storage,
-cross-browser flows, install/deploy verification, and copyright/trade-dress
-review. Exit only when the core flow passes automated and manual acceptance tests.
+The app has an error boundary, skip link, semantic dialogs, keyboard alternatives,
+visible focus, responsive side panels and mobile project actions, 390 px overflow
+QA, bilingual microcopy, print CSS, pure export tests, a configurable Vite base,
+and an official Pages workflow that runs tests before deployment. Broader
+cross-browser automation and measured performance profiling remain incremental
+maintenance work.
 
 ## 20. Immediate next step
 
-Build Phase 5 on the interactive configurator: add the local project repository,
-autosave and recovery, issue-to-entity navigation, a traceable BOM/price review,
-JSON and safe CSV exports, and a semantic print summary. Keep the existing
-reducer/history path and retain placement, validation and pricing test coverage.
+Maintain the release candidate: add tested schema migrations when the saved-data
+shape changes, expand cross-browser accessibility automation, and introduce
+manufacturing cut optimization only behind the existing derived-parts boundary.

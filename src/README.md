@@ -12,6 +12,8 @@ src/
   i18n/                English/Romanian dictionaries and lookup
   models/              design contracts and object factories
   pricing/             pure component and design estimates
+  export/              versioned JSON, parts derivation, CSV and downloads
+  storage/             browser-local draft and named-project repository
   state/               reducer/context and derived state
   utils/               integer-safe dimension conversion/formatting
   validation/          pure rule engine and actionable issue keys

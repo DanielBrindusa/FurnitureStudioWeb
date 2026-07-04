@@ -1,180 +1,177 @@
 # FurnitureStudioWeb
 
-FurnitureStudioWeb is an original, professional browser application for
-designing custom wardrobes and cabinets. It is a furniture-object configurator:
-users define a cabinet envelope, construct frames, place internals, choose doors
-and finishes, review constraints, estimate price, and export a parts list.
+FurnitureStudioWeb is an original, browser-based configurator for custom
+wardrobes and cabinets. It combines millimetre-precise frame sizing, realistic
+SVG furniture rendering, internal components, doors and finishes, fit rules,
+fictional pricing, local project storage, and user-controlled exports in a
+responsive workspace.
 
-It is **not** a room planner, interior-design tool, desktop companion, ecommerce
-store, or clone of any existing furniture planner.
+It is a furniture-object planner, not a room planner, ecommerce store, cloud
+service, desktop companion, or clone of another furniture planner.
 
-## Project status
+## Screenshots
 
-The repository now includes the **interactive interior and fronts configurator**.
-Users can drag fictional components into frames, move or edit them precisely,
-apply adaptive internal layouts, configure doors, handles, finishes and lighting,
-and see realistic SVG rendering, placement validation, undo/redo, and a live
-category price breakdown. Equivalent add and 1 cm movement controls keep the
-workflow usable with touch and keyboard at a 390 px mobile viewport.
+> Add final desktop, mobile, door-preview, and print-summary screenshots here
+> after the public Pages URL is stable.
 
-Local project persistence and final JSON/CSV/print workflows remain deferred to
-the review/export phase.
+## Features
 
-## Legal and originality note
+- Installation boundaries and clearances entered in centimetres with 1 mm
+  internal precision.
+- Custom or preset frames from 10–2070 mm wide and 10–2800 mm high.
+- Categorized fictional catalog of shelves, dividers, rails, drawers, baskets,
+  shoe storage, panels, accessories, handles, and lighting.
+- Pointer placement with live snap/validity feedback, plus accessible add,
+  duplicate, delete, numeric, and 1 cm movement controls.
+- Adaptive internal-layout presets and bounded undo/redo history.
+- Hinged, sliding, double-sliding, mirror, glass-look, flat, and framed fronts.
+- Original materials and finishes with wood, matte, mirror, glass, metal, mesh,
+  drawer, shelf, basket, handle, and lighting effects.
+- Friendly validation for furniture fit, collisions, depth, hanging clearance,
+  lighting zones, doors, and handles.
+- Live fictional estimate split into frames, fronts, components, accessories,
+  and lighting.
+- English and Romanian interfaces.
+- Debounced local autosave and named designs stored only in this browser.
+- Versioned JSON backup/import with validation and a replacement preview.
+- Spreadsheet-friendly CSV parts list protected against formula injection.
+- Groupable on-screen parts list and a print-friendly project summary.
+- Desktop, tablet, and 390 px mobile layouts with a preview-first workflow.
+- Static GitHub Pages deployment with no server, account, or paid API.
 
-The public IKEA PAX planning experience was studied only to understand the
-general wardrobe-configurator category and user expectations. IKEA, PAX,
-KOMPLEMENT, their product names, article numbers, prices, photography, icons,
-copy, typography, layouts, colors, interaction sequence, design system, and
-trade dress are not part of this product and must not be reproduced.
+## Technology
 
-FurnitureStudioWeb will use its own:
+- React 19 and TypeScript
+- Vite
+- Plain CSS and an SVG-first 2.5D/front-elevation renderer
+- Vitest for pure domain tests
+- Browser `localStorage` for user-owned local data
+- GitHub Actions and GitHub Pages
 
-- brand, writing, information architecture, and interaction model;
-- fictional component catalog, SKUs, prices, materials, and compatibility data;
-- visual language, UI tokens, icons, and furniture rendering;
-- local project/export model rather than retailer account and cart behavior.
+There is no backend, database, authentication, telemetry, automatic sync,
+Electron integration, or runtime third-party service.
 
-Before accepting any future catalog or design-system change, contributors should
-check that it is independently designed and does not create source confusion.
+## Install and run locally
 
-## Public planner analysis: learning summary
-
-Research was performed on 4 July 2026 using the public
-[planner landing page](https://www.ikea.com/gb/en/planners/pax-planner/), the
-[interactive planning tool](https://www.ikea.com/addon-app/storageone/pax/web/latest/gb/en/),
-and IKEA's public
-[wardrobe planning guide](https://www.ikea.com/be/en/rooms/bedroom/how-to/how-to-design-your-perfect-pax-wardrobe-pub8b76dda0/).
-The detailed, point-by-point analysis is in
-[docs/PRODUCT_SPEC.md](docs/PRODUCT_SPEC.md).
-
-Useful category lessons:
-
-- A visual start page, ready-made examples, and a clear “new or saved” choice
-  reduce blank-canvas anxiety.
-- A continuously visible preview and price make each choice feel concrete.
-- Compatibility-filtered catalogs prevent many impossible combinations before
-  they happen.
-- Category navigation makes a large catalog approachable, while undo/redo and
-  selected-item actions make experimentation safer.
-- Realistic materials, measurements, doors, props, and lighting build purchase
-  confidence, but a room-like 3D scene can also distract from the furniture.
-- Preset product dimensions are easy to understand but do not meet the needs of
-  a truly custom cabinet designer.
-- On mobile, a bottom-sheet catalog preserves the preview, but the reduced canvas
-  makes precise placement and complex comparisons harder.
-- Rules are most useful when explained near the decision, not only as a failure
-  after the user tries to continue.
-
-FurnitureStudioWeb will retain the category's confidence-building ideas while
-using a different product structure: **Set up → Build → Outfit → Finish → Review**,
-with an installation boundary rather than a room and millimetre-level custom
-dimensions rather than a retailer's fixed product grid.
-
-## Original app requirements
-
-### Design scope
-
-Users will be able to configure:
-
-- one or more frames/cabinets within an installation boundary;
-- integer-millimetre width, height, and depth;
-- shelves, dividers, rails, drawers, baskets, panels, plinths, and lighting;
-- hinged, sliding, glass, and mirror door treatments where compatible;
-- handles, materials, colors, edge treatments, and accessories;
-- price estimate, design issues, bill of materials, and printable summary.
-
-Installation space records available width, height, depth, and optional left,
-right, and top clearances. It does not model a room.
-
-### Required dimension rules
-
-All lengths are stored as integers in millimetres. Display units are formatting
-only and never become the source of truth.
-
-| Property | Internal range / values | Editing step |
-| --- | --- | --- |
-| Frame width | 10–2070 mm | 1 mm |
-| Frame height | 10–2800 mm | 1 mm |
-| Frame depth | presets 350, 450, 580, 600 mm; custom depth where supported | 1 mm |
-| Clearances | non-negative integer millimetres | 1 mm |
-
-### Visual target
-
-The builder will use a reliable SVG-first 2.5D/front-elevation renderer rather
-than unstable free-camera 3D. It should represent board thickness, side/top/
-bottom panels, reveals, inner shadow, realistic materials, drawer fronts,
-shelves, rails, baskets, glass and mirror effects, handles, seams, lighting,
-measurements, selection outlines, and valid/invalid placement feedback.
-
-The initial shell establishes an independent workshop/editorial visual direction:
-warm paper, deep forest, clay accents, restrained typography, and technical
-drawing details. These are project-owned design decisions, not references to a
-retailer identity.
-
-## Technical direction
-
-- Vite, React, TypeScript, and plain CSS.
-- No backend, database, authentication, Electron, or paid API.
-- Pure TypeScript domain modules for design mutation, validation, pricing,
-  persistence, migration, and export.
-- Browser `localStorage` with a versioned envelope and recoverable autosave.
-- JSON import/export, CSV parts export, and a print-specific HTML summary.
-- Relative Vite asset paths and `HashRouter` if routing is introduced, avoiding
-  GitHub Pages refresh failures.
-- SVG furniture view with pointer and keyboard operations backed by the same
-  command layer.
-
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for module boundaries, data
-contracts, rule processing, storage, exports, testing, and deployment.
-
-## Planned implementation phases
-
-1. **Foundation** — product specification, architectural contracts, build, Pages
-   workflow, design tokens. *(Complete.)*
-2. **Design kernel** — data model, dimension utilities, fictional catalog,
-   validation, pricing, internationalization, reducer state, and unit tests.
-   *(Complete.)*
-3. **Frame builder** — installation boundary presets, precise frame dimensions,
-   proportional SVG elevation, selection, measurements, materials, frame order,
-   responsive panels, and live validation/pricing. *(Core slice complete.)*
-4. **Interior builder** — shelves, dividers, rails, drawers, baskets, accessories,
-   adaptive presets, snap previews, collision checks, and accessible movement.
-   *(Complete.)*
-5. **Fronts and finishes** — door systems, handles, panels, material rendering,
-   lighting, compatibility rules. *(Core slice complete.)*
-6. **Review and export** — issue center, price breakdown, parts list, JSON/CSV,
-   print view, import recovery.
-7. **Hardening** — responsive refinement, accessibility audit, performance,
-   browser tests, corrupted-storage recovery, deployment QA.
-
-Each phase must end with a usable vertical slice and tests for its domain rules.
-
-## Local development
-
-Prerequisites: Node.js 24 or a supported current LTS release, and npm.
+Prerequisites: Node.js 24 (or a supported current LTS release) and npm.
 
 ```bash
 npm install
 npm run dev
 ```
 
-Production verification:
+Open the local URL printed by Vite.
+
+## Test, build, and preview
 
 ```bash
+npm test
 npm run typecheck
 npm run build
 npm run preview
 ```
 
-The static output is written to `dist/`. The included Pages workflow deploys
-that directory on pushes to `main` once GitHub Pages is configured to use
-**GitHub Actions** as its source.
+The production site is written to `dist/`. Relative asset URLs allow the same
+build to work at a root domain or a GitHub repository subpath.
 
-## Next implementation prompt
+## Deploy to GitHub Pages
 
-Implement the **review, persistence, and export slice** from
-`docs/ARCHITECTURE.md`: versioned local projects with autosave/recovery, issue
-navigation, a traceable price and parts breakdown, JSON/CSV export, and a semantic
-print summary. Preserve the current command history, validation, pricing, i18n,
-responsive controls, and SVG renderer contracts.
+The repository includes `.github/workflows/deploy-pages.yml`. It installs the
+locked dependencies, runs the production build, uploads `dist/`, and deploys it
+with the official GitHub Pages actions.
+
+1. Push the repository to GitHub with the deployment workflow on `main`.
+2. Open **Settings → Pages** in the GitHub repository.
+3. Set **Source** to **GitHub Actions**.
+4. Push to `main`, or run **Deploy FurnitureStudioWeb** manually from the
+   **Actions** tab.
+5. Wait for both the build and deploy jobs to finish.
+
+`npm run deploy` performs the same local production build check and reminds you
+to push `main`; the actual publication remains an auditable GitHub Action rather
+than a script that force-pushes generated files.
+
+No router is currently required. If multiple URLs are introduced later, use a
+hash-based router so refreshing a GitHub Pages subpath does not require server
+rewrites.
+
+## Local saves and autosave
+
+The current draft is autosaved after committed edits. Named designs can be
+saved, loaded, duplicated, renamed, and deleted from the Projects dialog.
+Summaries include dimensions, frame count, update time, and estimated price.
+
+All data stays in `localStorage` on the current browser profile and device. It is
+not uploaded or synchronized. Clearing site data removes these saves. Use JSON
+export for portable backups or transfer between devices. The app reports blocked
+storage, quota failures, and corrupted records without exposing technical error
+details.
+
+## JSON import and export
+
+JSON export creates a readable `.furniture-studio.json` file containing a
+versioned envelope and the canonical design. Derived prices, issues, and parts
+rows are recalculated after loading.
+
+Import is always user initiated. Files are limited to 5 MB, parsed as data,
+checked for the supported schema and required object shapes, and shown as a
+preview before replacing the in-memory design. Unsupported or damaged files are
+rejected with a friendly message. There is no automatic file or cloud sync.
+
+## CSV parts list
+
+CSV export includes category, item name, fictional SKU, frame reference,
+millimetre dimensions, material, quantity, unit estimate, line estimate, and
+relevant warning codes. It uses RFC-style quoting, a UTF-8 BOM for common
+spreadsheet tools, and formula-prefix protection for user-controlled text.
+
+## Print summary
+
+The print view contains the project name and date, installation and furniture
+dimensions, a simplified elevation, frame/front/material data, parts, warnings,
+price estimate, fictional-price disclaimer, and independence notice. Print CSS
+uses a white background, compact tables, hidden editor controls, and page-break
+protection. A browser may save this print view as PDF.
+
+## Dimensions and prices
+
+All stored lengths and positions are integer millimetres. Centimetres are only a
+display/input convenience; one decimal centimetre equals one millimetre. Geometry,
+validation, prices, saved files, and exports use the millimetre source of truth.
+
+Every catalog name, SKU, material, compatibility rule, and price is fictional.
+Price totals are planning estimates only; they do not include tax, delivery,
+stock, discounts, installation, or checkout.
+
+## Legal and originality note
+
+FurnitureStudioWeb is an independent project and is not affiliated with,
+endorsed by, or connected to IKEA or any other furniture company. IKEA, PAX,
+KOMPLEMENT, third-party product names, article numbers, prices, photography,
+icons, copy, typography, layouts, colors, interaction sequence, and trade dress
+are not used by this project.
+
+The app has its own brand, writing, information architecture, visual language,
+fictional catalog, pricing model, data format, and interaction structure.
+
+## Current limitations
+
+- Saves are browser-local and do not roam between devices without JSON export.
+- The renderer is a reliable SVG front elevation, not free-camera room-scale 3D.
+- Drag interaction is optimized for modern pointer-enabled browsers; touch and
+  keyboard users use equivalent add and movement controls.
+- The parts list is a planning breakdown, not a manufacturing cut optimizer.
+- Imported future schema versions require an app update rather than being guessed.
+- Browser print output varies slightly by operating system and print engine.
+
+## Recommended future improvements
+
+- Tested schema migrations for future project versions.
+- Optional cut optimization and hardware-pack BOM recipes.
+- Automated accessibility checks and a small cross-browser end-to-end suite.
+- User-created component templates and reusable material palettes.
+- Additional print page-number support where browser engines permit it.
+
+Technical contracts and phased decisions are documented in
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), with product intent in
+[docs/PRODUCT_SPEC.md](docs/PRODUCT_SPEC.md).

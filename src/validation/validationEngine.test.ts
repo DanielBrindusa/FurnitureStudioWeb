@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { createComponent, createDesign, createFrame } from '../models/factories'
+import { createComponent, createDesign, createDoor, createFrame } from '../models/factories'
 import { validateDesign } from './validationEngine'
 
 describe('validation engine', () => {
@@ -43,5 +43,28 @@ describe('validation engine', () => {
     design.frames = [frame]
 
     expect(validateDesign(design).some((issue) => issue.code === 'component.drawer_overlap')).toBe(true)
+  })
+
+  it('detects installation height overflow and out-of-bounds components', () => {
+    const design = createDesign()
+    design.installationSpace.heightMm = 2000
+    const frame = createFrame({ id: 'too-tall', orderIndex: 0, heightMm: 2100 })
+    frame.components = [createComponent('shelf', frame, { id: 'outside', yMm: 2090 })]
+    design.frames = [frame]
+
+    const codes = validateDesign(design).map((issue) => issue.code)
+    expect(codes).toContain('installation.height_overflow')
+    expect(codes).toContain('component.out_of_bounds')
+  })
+
+  it('validates sliding-door width and handle compatibility', () => {
+    const design = createDesign()
+    const frame = createFrame({ id: 'door-frame', orderIndex: 0, widthMm: 800 })
+    frame.doors = [createDoor('sliding', frame, { id: 'sliding-door', handleId: 'round-soft-knob' })]
+    design.frames = [frame]
+
+    const codes = validateDesign(design).map((issue) => issue.code)
+    expect(codes).toContain('door.sliding_width')
+    expect(codes).toContain('door.handle_incompatible')
   })
 })
