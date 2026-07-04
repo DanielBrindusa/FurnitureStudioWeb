@@ -5,17 +5,14 @@ should add code along these boundaries without coupling domain rules to React:
 
 ```text
 src/
-  app/                 composition, routing, providers, global UI shell
-  components/          reusable presentational controls
-  core/
-    catalog/           fictional products, materials, compatibility metadata
-    design/            versioned design model and mutations
-    pricing/           pure line-item and total calculations
-    validation/        pure rule registry and issue model
-  features/
-    builder/           frame/component editing experience
-    projects/          local save/load and JSON import/export
-    review/            summary, parts list, CSV, and print view
+  app/                 workspace composition and shell styling
+  data/                fictional products and materials
+  i18n/                English/Romanian dictionaries and lookup
+  models/              design contracts and object factories
+  pricing/             pure component and design estimates
+  state/               reducer/context and derived state
+  utils/               integer-safe dimension conversion/formatting
+  validation/          pure rule engine and actionable issue keys
   styles/              tokens and global/reset styles
 ```
 

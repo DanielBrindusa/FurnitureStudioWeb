@@ -573,11 +573,11 @@ small number of high-value flows when their implementation phase begins.
 
 ## 19. Implementation phases and exit gates
 
-### Phase 0 — foundation (current)
+### Phase 0 — foundation (complete)
 
 Vite shell, original tokens, specs, Pages workflow, install and production build.
 
-### Phase 1 — design kernel
+### Phase 1 — design kernel (complete foundation)
 
 Versioned model, original fixture catalog, commands, geometry basics, validation,
 BOM/pricing, storage/migration, JSON/CSV adapters, and unit tests. Exit when a
@@ -614,7 +614,7 @@ review. Exit only when the core flow passes automated and manual acceptance test
 
 ## 20. Immediate next step
 
-Implement Phase 1 as pure TypeScript first. Begin with units, schema, catalog
-fixtures, and commands; then validation; then BOM/pricing; finally storage and
-exports. Keep the current React shell as a thin harness until those contracts are
-covered by tests.
+Implement Phase 2 around the completed TypeScript foundation: add local project
+persistence and history, then replace the placeholder elevation with a precise SVG
+frame builder. Keep all pointer, keyboard, and numeric edits on the same reducer
+command path and retain the existing validation/pricing test coverage.

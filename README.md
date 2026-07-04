@@ -10,11 +10,11 @@ store, or clone of any existing furniture planner.
 
 ## Project status
 
-The repository is at **Phase 0: product definition and technical foundation**.
-It includes a clean Vite + React + TypeScript application shell, an original
-visual starting point, product and architecture specifications, and a GitHub
-Pages deployment workflow. The configurator itself has intentionally not been
-built yet.
+The repository is at **Phase 1: technical configurator foundation**. It now
+includes the versioned design types, integer-safe dimension utilities, original
+fictional catalog, validation and pricing engines, English/Romanian translations,
+React reducer state, focused unit tests, and a usable workspace shell. Precise
+drag-and-drop and the final realistic canvas are intentionally deferred.
 
 ## Legal and originality note
 
@@ -127,9 +127,10 @@ contracts, rule processing, storage, exports, testing, and deployment.
 ## Planned implementation phases
 
 1. **Foundation** — product specification, architectural contracts, build, Pages
-   workflow, design tokens. *(Current.)*
-2. **Design kernel** — versioned data model, immutable commands, fixture catalog,
-   validation, pricing, storage, migrations, and unit tests.
+   workflow, design tokens. *(Complete.)*
+2. **Design kernel** — data model, dimension utilities, fictional catalog,
+   validation, pricing, internationalization, reducer state, and unit tests.
+   *(Complete.)*
 3. **Frame builder** — installation boundary, frame dimensions, SVG elevation,
    selection, measurements, undo/redo.
 4. **Interior builder** — shelves, dividers, rails, drawers, baskets, placement
@@ -166,7 +167,8 @@ that directory on pushes to `main` once GitHub Pages is configured to use
 
 ## Next implementation prompt
 
-Implement **Phase 1: the design kernel** from `docs/ARCHITECTURE.md`. Add the
-versioned TypeScript model, fictional starter catalog, pure command/validation/
-pricing engines, localStorage repository with migrations, and focused unit tests.
-Do not build drag-and-drop or the full furniture UI yet.
+Implement **Phase 2: the interactive frame builder** from
+`docs/ARCHITECTURE.md`. Add project persistence, command history, precise SVG
+front elevation, frame creation/editing, measurements, selection, keyboard
+operations, and undo/redo. Preserve the existing validation, pricing, i18n, and
+reducer contracts; do not add free-camera 3D.
