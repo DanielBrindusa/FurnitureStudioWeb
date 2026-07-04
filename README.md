@@ -10,11 +10,15 @@ store, or clone of any existing furniture planner.
 
 ## Project status
 
-The repository is at **Phase 0: product definition and technical foundation**.
-It includes a clean Vite + React + TypeScript application shell, an original
-visual starting point, product and architecture specifications, and a GitHub
-Pages deployment workflow. The configurator itself has intentionally not been
-built yet.
+The repository now includes the **Phase 2 interactive frame-builder core**. In
+addition to the technical configurator foundation, users can define an
+installation boundary, start from original frame presets, edit every dimension
+to one-millimetre precision, reorder and duplicate frames, choose materials and
+finishes, and review a live estimate and fit validation on a proportional SVG
+furniture canvas. The workspace is responsive down to a 390 px mobile viewport.
+
+Interior component drag-and-drop, project persistence/history, and final export
+workflows remain intentionally deferred to later phases.
 
 ## Legal and originality note
 
@@ -127,11 +131,13 @@ contracts, rule processing, storage, exports, testing, and deployment.
 ## Planned implementation phases
 
 1. **Foundation** — product specification, architectural contracts, build, Pages
-   workflow, design tokens. *(Current.)*
-2. **Design kernel** — versioned data model, immutable commands, fixture catalog,
-   validation, pricing, storage, migrations, and unit tests.
-3. **Frame builder** — installation boundary, frame dimensions, SVG elevation,
-   selection, measurements, undo/redo.
+   workflow, design tokens. *(Complete.)*
+2. **Design kernel** — data model, dimension utilities, fictional catalog,
+   validation, pricing, internationalization, reducer state, and unit tests.
+   *(Complete.)*
+3. **Frame builder** — installation boundary presets, precise frame dimensions,
+   proportional SVG elevation, selection, measurements, materials, frame order,
+   responsive panels, and live validation/pricing. *(Core slice complete.)*
 4. **Interior builder** — shelves, dividers, rails, drawers, baskets, placement
    previews, collision checks, keyboard placement.
 5. **Fronts and finishes** — door systems, handles, panels, material rendering,
@@ -166,7 +172,9 @@ that directory on pushes to `main` once GitHub Pages is configured to use
 
 ## Next implementation prompt
 
-Implement **Phase 1: the design kernel** from `docs/ARCHITECTURE.md`. Add the
-versioned TypeScript model, fictional starter catalog, pure command/validation/
-pricing engines, localStorage repository with migrations, and focused unit tests.
-Do not build drag-and-drop or the full furniture UI yet.
+Implement the next **interior-builder slice** from `docs/ARCHITECTURE.md`: place
+and edit shelves, dividers, rails, drawers, and baskets inside the completed
+frame canvas, with visible snap candidates, containment/collision feedback, and
+equivalent pointer, touch, keyboard, and numeric controls. Add bounded undo/redo
+and local project persistence before enabling final exports. Preserve the
+existing validation, pricing, i18n, reducer, and SVG renderer contracts.

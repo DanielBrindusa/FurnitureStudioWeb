@@ -573,21 +573,25 @@ small number of high-value flows when their implementation phase begins.
 
 ## 19. Implementation phases and exit gates
 
-### Phase 0 — foundation (current)
+### Phase 0 — foundation (complete)
 
 Vite shell, original tokens, specs, Pages workflow, install and production build.
 
-### Phase 1 — design kernel
+### Phase 1 — design kernel (complete foundation)
 
 Versioned model, original fixture catalog, commands, geometry basics, validation,
 BOM/pricing, storage/migration, JSON/CSV adapters, and unit tests. Exit when a
 headless two-frame fixture round-trips and produces stable issues/BOM/price.
 
-### Phase 2 — frame builder
+### Phase 2 — frame builder (core complete)
 
-Project launcher, installation setup, frame controls, SVG elevation, selection,
-dimensions, undo/redo, autosave. Exit when keyboard and pointer users can build
-and correct an overflowing frame set.
+The delivered core includes installation presets and centimetre inputs backed by
+integer millimetres, preset and custom frames, precise dimension controls,
+selection, duplication and ordering, material/finish choices, responsive panels,
+live validation/pricing, and a proportional SVG elevation with measurements,
+zoom, pan, fit, and reset controls. The frame set can be built and corrected on
+desktop and mobile. Project launcher, bounded history, and autosave remain the
+next cross-cutting additions.
 
 ### Phase 3 — interior builder
 
@@ -614,7 +618,8 @@ review. Exit only when the core flow passes automated and manual acceptance test
 
 ## 20. Immediate next step
 
-Implement Phase 1 as pure TypeScript first. Begin with units, schema, catalog
-fixtures, and commands; then validation; then BOM/pricing; finally storage and
-exports. Keep the current React shell as a thin harness until those contracts are
-covered by tests.
+Build Phase 3 on the completed frame workspace: add shelves, dividers, rails,
+drawers, and baskets with placement candidates, containment/collision feedback,
+and equivalent pointer, touch, keyboard, and numeric operations. Add local
+project persistence and bounded history before final exports, keep edits on the
+same reducer command path, and retain the validation/pricing test coverage.

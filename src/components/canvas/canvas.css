@@ -1,0 +1,164 @@
+.wardrobe-canvas {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #ded8cc;
+}
+
+.canvas-warning-strip {
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 2.6rem;
+  padding: 0.55rem 1rem;
+  border-bottom: 1px solid #dfb3a6;
+  background: #fff1eb;
+  color: #843d2d;
+  font-size: 0.72rem;
+  font-weight: 750;
+}
+
+.canvas-warning-strip > span {
+  display: grid;
+  width: 1.25rem;
+  height: 1.25rem;
+  place-items: center;
+  border-radius: 50%;
+  background: #a54d38;
+  color: white;
+  font-size: 0.7rem;
+}
+
+.canvas-surface { position: relative; min-height: 32rem; overflow: hidden; }
+
+.furniture-viewport {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 32rem;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.furniture-viewport.is-panning { cursor: grabbing; }
+
+.boundary-fill { fill: rgba(255, 255, 255, 0.26); }
+.boundary-outline { fill: none; stroke: #5f6d65; stroke-width: 6; stroke-dasharray: 24 16; opacity: 0.58; }
+.installation-boundary.has-overflow .boundary-outline { stroke: #b85740; opacity: 0.9; }
+.clearance-zone { fill: #bd9d72; opacity: 0.09; }
+.remaining-zone { fill: #5f8b72; opacity: 0.07; }
+
+.frame-view { cursor: pointer; outline: none; transition: filter 160ms ease; }
+.frame-view:hover { filter: brightness(1.035); }
+.frame-depth-side,
+.frame-depth-top { stroke: rgba(75, 61, 45, 0.24); stroke-width: 2; }
+.frame-cavity { fill: #817767; opacity: 0.82; }
+.back-panel { pointer-events: none; }
+.cabinet-panel { stroke: rgba(78, 61, 42, 0.28); stroke-width: 2; }
+
+.frame-hit-outline { fill: transparent; stroke: transparent; stroke-width: 8; transition: stroke 150ms ease; }
+.frame-view:hover .frame-hit-outline { stroke: rgba(181, 105, 69, 0.45); }
+.frame-view.is-selected .frame-hit-outline { stroke: #b56945; stroke-width: 10; filter: drop-shadow(0 0 9px rgba(181, 105, 69, 0.26)); }
+.frame-view:focus-visible .frame-hit-outline { stroke: #1f3029; stroke-width: 12; }
+
+.rendered-component rect { fill: #e6ded0; stroke: rgba(63, 50, 36, 0.28); stroke-width: 2; filter: drop-shadow(0 4px 3px rgba(48, 38, 27, 0.18)); }
+.rendered-component line { stroke: #5c554b; stroke-width: 5; stroke-linecap: round; }
+.rendered-component.is-wire-basket rect,
+.rendered-component.is-laundry-basket rect { fill: none; stroke-dasharray: 8 6; }
+.rendered-component.is-shoe-shelf rect { transform-box: fill-box; transform-origin: center; transform: skewY(-3deg); }
+.rendered-component.is-vertical-divider rect { fill: #d9cfbd; }
+.rendered-rail { stroke: #7f817d; stroke-width: 10; stroke-linecap: round; filter: drop-shadow(0 3px 2px rgba(20,20,20,.22)); }
+.rendered-light { fill: #fff1b4; filter: drop-shadow(0 0 14px rgba(255, 221, 115, 0.85)); }
+
+.rendered-door rect { stroke: rgba(64, 57, 48, 0.35); stroke-width: 4; }
+.rendered-door > line { stroke: rgba(63, 57, 50, 0.38); stroke-width: 3; }
+.rendered-door .door-handle { stroke: #4b4640; stroke-width: 9; stroke-linecap: round; }
+
+.frame-order-badge circle { fill: #24362e; stroke: white; stroke-width: 3; }
+.frame-order-badge text { fill: white; font-size: 18px; font-weight: 850; letter-spacing: 1px; }
+.frame-name-label { fill: #26322c; font-size: 25px; font-weight: 800; }
+.frame-size-label { fill: #697069; font-size: 19px; font-weight: 650; }
+
+.measurement { color: #52625a; }
+.measurement.is-accent { color: #9f5a3b; }
+.measurement.is-warning { color: #b24d39; }
+.measurement line { stroke: currentColor; stroke-width: 3; }
+.measurement text,
+.remaining-width-label { fill: currentColor; font-size: 22px; font-weight: 800; paint-order: stroke; stroke: #f1eee7; stroke-width: 8; stroke-linejoin: round; }
+.remaining-width-label { fill: #4f6258; }
+.remaining-width-label.is-negative { fill: #b24d39; }
+
+.canvas-controls {
+  position: absolute;
+  z-index: 5;
+  right: 1rem;
+  bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.35rem;
+  border: 1px solid rgba(40, 54, 47, 0.12);
+  border-radius: 0.75rem;
+  background: rgba(255, 253, 248, 0.92);
+  box-shadow: 0 0.7rem 2rem rgba(45, 42, 35, 0.17);
+  backdrop-filter: blur(12px);
+}
+
+.canvas-controls button {
+  display: grid;
+  width: 2.55rem;
+  height: 2.55rem;
+  place-items: center;
+  border: 0;
+  border-radius: 0.52rem;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.08rem;
+  font-weight: 800;
+}
+
+.canvas-controls button:hover,
+.canvas-controls button.is-active { background: #e5ebe6; color: #1f4937; }
+.canvas-controls output { min-width: 3.5rem; font-size: 0.68rem; font-weight: 800; text-align: center; }
+.canvas-control-divider { width: 1px; height: 1.7rem; margin: 0 0.2rem; background: rgba(39, 47, 42, 0.15); }
+.canvas-pan-hint { position: absolute; left: 1rem; bottom: 1rem; margin: 0; color: #66716a; font-size: 0.62rem; font-weight: 700; }
+
+.canvas-empty-state {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: min(26rem, calc(100% - 2rem));
+  justify-items: center;
+  padding: 2rem;
+  border: 1px solid rgba(48, 62, 54, 0.12);
+  border-radius: 1rem;
+  background: rgba(250, 248, 242, 0.88);
+  box-shadow: 0 1.5rem 4rem rgba(47, 42, 34, 0.13);
+  text-align: center;
+  transform: translate(-50%, -50%);
+  backdrop-filter: blur(10px);
+}
+
+.canvas-empty-state > span { display: grid; width: 3.2rem; height: 3.2rem; place-items: center; border: 1px solid #a8b3ac; border-radius: 50%; color: #a05b3e; font-size: 1.4rem; }
+.canvas-empty-state h2 { margin: 1rem 0 1.25rem; font-family: Georgia, serif; font-size: clamp(1.45rem, 3vw, 2.2rem); font-weight: 400; line-height: 1.15; }
+
+@media (max-width: 900px) {
+  .canvas-surface,
+  .furniture-viewport { min-height: 29rem; }
+  .canvas-pan-hint { display: none; }
+}
+
+@media (max-width: 520px) {
+  .canvas-surface,
+  .furniture-viewport { min-height: 25rem; }
+  .canvas-controls { right: 0.6rem; bottom: 0.6rem; max-width: calc(100% - 1.2rem); }
+  .canvas-controls button { width: 2.7rem; height: 2.7rem; }
+  .canvas-controls output { min-width: 2.7rem; }
+}
