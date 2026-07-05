@@ -39,7 +39,7 @@ const notesFor = (id: string, validation: ValidationResult[]) => validation
 
 export function derivePartsList(design: Design, validation: ValidationResult[] = []): PartRow[] {
   const rows: PartRow[] = []
-  const orderedFrames = [...design.frames].sort((a, b) => a.orderIndex - b.orderIndex)
+  const orderedFrames = [...design.furniture.frames].sort((a, b) => a.orderIndex - b.orderIndex)
 
   orderedFrames.forEach((frame, index) => {
     const frameReference = `${index + 1}. ${frame.name}`

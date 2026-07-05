@@ -83,7 +83,7 @@ export function getPriceBreakdown(design: Design): PriceBreakdown {
   let accessories = 0
   let lighting = 0
 
-  for (const frame of design.frames) {
+  for (const frame of design.furniture.frames) {
     frames += calculateFramePrice(frame)
 
     for (const door of frame.doors) {

@@ -11,13 +11,15 @@ import type {
 } from '../models/design'
 import { FRAME_HEIGHT_RANGE, FRAME_WIDTH_RANGE } from '../utils/dimensions'
 
-const DRAWER_TYPES = new Set<FurnitureComponentType>(['drawer', 'deep-drawer'])
-const BASKET_TYPES = new Set<FurnitureComponentType>(['wire-basket', 'laundry-basket'])
-const SHELF_TYPES = new Set<FurnitureComponentType>(['shelf', 'shoe-shelf', 'angled-shoe-shelf'])
+const DRAWER_TYPES = new Set<FurnitureComponentType>(['drawer', 'deep-drawer', 'shallow-drawer'])
+const BASKET_TYPES = new Set<FurnitureComponentType>(['wire-basket', 'mesh-basket', 'laundry-basket'])
+const SHELF_TYPES = new Set<FurnitureComponentType>(['shelf', 'adjustable-shelf', 'fixed-shelf', 'glass-shelf', 'display-shelf', 'shoe-shelf', 'angled-shoe-shelf'])
 const STORAGE_VOLUME_TYPES = new Set<FurnitureComponentType>([
   'drawer',
   'deep-drawer',
+  'shallow-drawer',
   'wire-basket',
+  'mesh-basket',
   'laundry-basket',
   'pull-out-tray',
   'accessory-tray',
@@ -50,7 +52,9 @@ function makeIssue(
     code,
     messageKey,
     targetId,
+    targetObjectId: targetId,
     suggestedFixKey,
+    blocking: severity === 'error',
   }
 }
 
@@ -265,18 +269,18 @@ export function validateDesign(design: Design): ValidationResult[] {
   const issues: ValidationResult[] = []
   const { installationSpace } = design
 
-  if (design.frames.length === 0) {
+  if (design.furniture.frames.length === 0) {
     return [makeIssue('warning', 'design.empty', design.id, 'validation.emptyDesign', 'fix.addFrame')]
   }
 
-  const totalFurnitureWidth = design.frames.reduce((total, frame) => total + frame.widthMm, 0)
+  const totalFurnitureWidth = design.furniture.frames.reduce((total, frame) => total + frame.widthMm, 0)
   const requiredWidth = totalFurnitureWidth + installationSpace.leftClearanceMm + installationSpace.rightClearanceMm
 
   if (requiredWidth > installationSpace.widthMm) {
     issues.push(makeIssue('error', 'installation.width_overflow', design.id, 'validation.installationWidthOverflow', 'fix.reduceTotalWidth'))
   }
 
-  for (const frame of design.frames) {
+  for (const frame of design.furniture.frames) {
     issues.push(...validateFrameDimensions(frame))
 
     if (frame.heightMm + installationSpace.topClearanceMm > installationSpace.heightMm) {

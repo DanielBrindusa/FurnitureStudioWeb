@@ -55,7 +55,7 @@ export function SavedProjectsDialog({ open, onClose, onSaved, t }: { open: boole
     const result = projectRepository.load(id)
     if (!result.ok) { setMessage(result.errorKey); return }
     const now = new Date().toISOString()
-    const copy = { ...result.value, id: newId(), name: `${result.value.name} ${t('storage.copySuffix')}`, createdAt: now, updatedAt: now, selectedItem: null }
+    const copy = { ...result.value, id: newId(), name: `${result.value.name} ${t('storage.copySuffix')}`, createdAt: now, updatedAt: now, selectedObject: null }
     const saved = projectRepository.save(copy)
     setMessage(saved.ok ? 'storage.duplicated' : saved.errorKey)
     refresh()

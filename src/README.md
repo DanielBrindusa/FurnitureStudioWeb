@@ -10,7 +10,10 @@ src/
     canvas/            proportional SVG furniture renderer and viewport controls
   data/                fictional products and materials
   i18n/                English/Romanian dictionaries and lookup
-  models/              design contracts and object factories
+  models/              schema-2 design, geometry, render, catalog, validation, migration
+    geometry.ts        integer-mm 3D bounds, overlap, conversion, and camera-fit math
+    rendering.ts       camera, view, selection, and render-setting contracts
+    catalog.ts         configurator catalog, pricing, placement, and render metadata
   pricing/             pure component and design estimates
   export/              versioned JSON, parts derivation, CSV and downloads
   storage/             browser-local draft and named-project repository

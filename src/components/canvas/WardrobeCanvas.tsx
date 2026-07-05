@@ -74,7 +74,7 @@ export function WardrobeCanvas({
   const panStart = useRef<PanStart | null>(null)
   const existingDrag = useRef<ExistingDrag | null>(null)
   const installation = design.installationSpace
-  const orderedFrames = useMemo(() => [...design.frames].sort((a, b) => a.orderIndex - b.orderIndex), [design.frames])
+  const orderedFrames = useMemo(() => [...design.furniture.frames].sort((a, b) => a.orderIndex - b.orderIndex), [design.furniture.frames])
   const layouts = useMemo<FrameLayout[]>(() => {
     let cursor = installation.leftClearanceMm
     return orderedFrames.map((frame) => {
@@ -87,13 +87,13 @@ export function WardrobeCanvas({
   const remainingWidth = installation.widthMm - installation.leftClearanceMm - installation.rightClearanceMm - totalWidth
   const furnitureEndX = installation.leftClearanceMm + totalWidth
   const hasInstallation = installation.widthMm > 0 && installation.heightMm > 0 && installation.depthMm > 0
-  const selectedId = design.selectedItem?.id ?? null
-  const selectedFrameId = design.selectedItem?.kind === 'frame'
+  const selectedId = design.selectedObject?.objectId ?? null
+  const selectedFrameId = design.selectedObject?.objectType === 'frame'
     ? selectedId
     : orderedFrames.find((frame) => frame.components.some((component) => component.id === selectedId) || frame.doors.some((door) => door.id === selectedId))?.id ?? null
-  const selectedComponentId = design.selectedItem?.kind === 'component' ? selectedId : null
-  const selectedDoorId = design.selectedItem?.kind === 'door' ? selectedId : null
-  const zoomPercent = clamp(design.viewSettings.zoomPercent, 40, 220)
+  const selectedComponentId = design.selectedObject?.objectType === 'component' ? selectedId : null
+  const selectedDoorId = design.selectedObject?.objectType === 'door' ? selectedId : null
+  const zoomPercent = clamp(design.camera.zoom, 40, 220)
   const baseWidth = Math.max(1200, installation.widthMm + 720)
   const baseHeight = Math.max(1200, installation.heightMm + 760)
   const zoomFactor = 100 / zoomPercent
@@ -265,10 +265,10 @@ export function WardrobeCanvas({
           {layouts.map((layout, index) => <FrameView
             key={layout.frame.id}
             layout={layout}
-            selectedFrame={design.selectedItem?.kind === 'frame' && selectedFrameId === layout.frame.id}
+            selectedFrame={design.selectedObject?.objectType === 'frame' && selectedFrameId === layout.frame.id}
             selectedComponentId={selectedComponentId}
             selectedDoorId={selectedDoorId}
-            showDoors={design.viewSettings.showDoors}
+            showDoors={design.renderSettings.showDoors}
             orderLabel={String(index + 1).padStart(2, '0')}
             dropState={placement?.frameId === layout.frame.id ? (placement.valid ? 'valid' : 'invalid') : null}
             onSelectFrame={() => { dispatch({ type: 'ITEM_SELECT', selectedItem: { kind: 'frame', id: layout.frame.id } }); onInspectorRequest() }}
@@ -280,12 +280,12 @@ export function WardrobeCanvas({
             <ComponentRenderer component={placement.component} frameHeight={previewLayout.frame.heightMm} frameX={previewLayout.x} frameY={previewLayout.y} preview invalid={!placement.valid} />
             <g className={`position-tooltip${placement.valid ? '' : ' is-invalid'}`} transform={`translate(${previewLayout.x + placement.component.xMm + placement.component.widthMm / 2} ${previewLayout.y + previewLayout.frame.heightMm - placement.component.yMm - placement.component.heightMm - 35})`}><rect x="-68" y="-28" width="136" height="42" rx="12" /><text textAnchor="middle">Y {placement.component.yMm} mm</text></g>
           </>}
-          {design.viewSettings.showMeasurements && <MeasurementOverlay installation={installation} layouts={layouts} selectedFrameId={selectedFrameId} totalWidth={totalWidth} remainingWidth={remainingWidth} t={t} />}
+          {design.renderSettings.showMeasurements && <MeasurementOverlay installation={installation} layouts={layouts} selectedFrameId={selectedFrameId} totalWidth={totalWidth} remainingWidth={remainingWidth} t={t} />}
         </FurnitureViewport>}
 
         {!hasInstallation && <EmptyCanvasState title={t('empty.noInstallation')} />}
-        {hasInstallation && design.frames.length === 0 && <EmptyCanvasState title={t('empty.addFirstFrame')} actionLabel={t('button.addFrame')} onAction={onAddFrame} />}
-        <CanvasControls zoomPercent={zoomPercent} showDimensions={design.viewSettings.showMeasurements} t={t} onZoomIn={() => updateZoom(zoomPercent + 10)} onZoomOut={() => updateZoom(zoomPercent - 10)} onFit={fit} onReset={() => { setPan({ x: 0, y: 0 }); dispatch({ type: 'VIEW_SETTINGS_UPDATE', patch: { zoomPercent: 100, showMeasurements: true } }) }} onToggleDimensions={() => dispatch({ type: 'VIEW_SETTINGS_UPDATE', patch: { showMeasurements: !design.viewSettings.showMeasurements } })} />
+        {hasInstallation && design.furniture.frames.length === 0 && <EmptyCanvasState title={t('empty.addFirstFrame')} actionLabel={t('button.addFrame')} onAction={onAddFrame} />}
+        <CanvasControls zoomPercent={zoomPercent} showDimensions={design.renderSettings.showMeasurements} t={t} onZoomIn={() => updateZoom(zoomPercent + 10)} onZoomOut={() => updateZoom(zoomPercent - 10)} onFit={fit} onReset={() => { setPan({ x: 0, y: 0 }); dispatch({ type: 'VIEW_SETTINGS_UPDATE', patch: { zoomPercent: 100, showMeasurements: true } }) }} onToggleDimensions={() => dispatch({ type: 'VIEW_SETTINGS_UPDATE', patch: { showMeasurements: !design.renderSettings.showMeasurements } })} />
         <p className="canvas-pan-hint">{activeCatalogItemId ? t('placement.dropHint') : t('canvas.panHint')}</p>
       </div>
     </section>

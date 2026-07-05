@@ -68,7 +68,7 @@ export function ExportDialog({ open, onClose, onPrint, t }: { open: boolean; onC
         </div>
         {candidate && (
           <div className="import-preview" role="status">
-            <div><span>{t('import.preview')}</span><strong>{candidate.name}</strong><small>{candidate.frames.length} {t('label.frames').toLowerCase()} · {candidate.frames.reduce((sum, frame) => sum + frame.widthMm, 0)} mm</small></div>
+            <div><span>{t('import.preview')}</span><strong>{candidate.name}</strong><small>{candidate.furniture.frames.length} {t('label.frames').toLowerCase()} · {candidate.furniture.totalWidthMm} mm</small></div>
             <p>{t('import.replaceWarning')}</p>
             <div><button type="button" className="primary-button" onClick={() => { dispatch({ type: 'DESIGN_LOAD', design: candidate }); setCandidate(null); onClose() }}>{t('button.replaceCurrent')}</button><button type="button" onClick={() => setCandidate(null)}>{t('button.cancel')}</button></div>
           </div>

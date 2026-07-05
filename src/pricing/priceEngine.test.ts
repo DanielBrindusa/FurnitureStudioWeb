@@ -30,7 +30,7 @@ describe('price engine', () => {
       createComponent('accessory-tray', frame),
     ]
     frame.doors = [createDoor('hinged', frame)]
-    design.frames = [frame]
+    design.furniture.frames = [frame]
 
     const breakdown = getPriceBreakdown(design)
     expect(breakdown.frames).toBeGreaterThan(0)

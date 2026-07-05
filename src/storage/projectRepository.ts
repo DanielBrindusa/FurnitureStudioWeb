@@ -38,11 +38,11 @@ function summaryFor(design: Design): SavedProjectSummary {
     name: design.name,
     createdAt: design.createdAt,
     updatedAt: design.updatedAt,
-    widthMm: design.frames.reduce((sum, frame) => sum + frame.widthMm, 0),
-    heightMm: design.frames.reduce((max, frame) => Math.max(max, frame.heightMm), 0),
-    depthMm: design.frames.reduce((max, frame) => Math.max(max, frame.depthMm), 0),
+    widthMm: design.furniture.totalWidthMm,
+    heightMm: design.furniture.maxHeightMm,
+    depthMm: design.furniture.maxDepthMm,
     estimatedPrice: calculateDesignPrice(design),
-    frameCount: design.frames.length,
+    frameCount: design.furniture.frames.length,
   }
 }
 

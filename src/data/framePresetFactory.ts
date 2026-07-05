@@ -1,10 +1,10 @@
 import { createComponent, createFrame } from '../models/factories'
-import type { CatalogItem, Frame, FurnitureComponent } from '../models/design'
+import type { Frame, FurnitureComponent, LegacyCatalogItem } from '../models/design'
 
 const shelf = (frame: Frame, yMm: number, widthMm = frame.widthMm - 36, xMm = 18): FurnitureComponent =>
   createComponent('shelf', frame, { yMm, widthMm, xMm, heightMm: 24 })
 
-export function buildFrameFromPreset(preset: CatalogItem, orderIndex: number): Frame {
+export function buildFrameFromPreset(preset: LegacyCatalogItem, orderIndex: number): Frame {
   const frame = createFrame({
     orderIndex,
     name: preset.name,

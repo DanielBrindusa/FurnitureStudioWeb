@@ -6,7 +6,7 @@ import { useDesign } from '../state/designState'
 
 function PrintElevation() {
   const { state } = useDesign()
-  const frames = [...state.design.frames].sort((a, b) => a.orderIndex - b.orderIndex)
+  const frames = [...state.design.furniture.frames].sort((a, b) => a.orderIndex - b.orderIndex)
   const totalWidth = Math.max(1, frames.reduce((sum, frame) => sum + frame.widthMm, 0))
   const maxHeight = Math.max(1, ...frames.map((frame) => frame.heightMm))
   let cursor = 0
@@ -26,7 +26,7 @@ export function PrintSummary({ open, onClose, t }: { open: boolean; onClose: () 
     return () => window.removeEventListener('keydown', closeOnEscape)
   }, [open, onClose])
   if (!open) return null
-  const frames = [...state.design.frames].sort((a, b) => a.orderIndex - b.orderIndex)
+  const frames = [...state.design.furniture.frames].sort((a, b) => a.orderIndex - b.orderIndex)
   const width = frames.reduce((sum, frame) => sum + frame.widthMm, 0)
   const height = frames.reduce((max, frame) => Math.max(max, frame.heightMm), 0)
   const depth = frames.reduce((max, frame) => Math.max(max, frame.depthMm), 0)

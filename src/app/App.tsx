@@ -13,7 +13,7 @@ import { WardrobeCanvas } from '../components/canvas/WardrobeCanvas'
 import { framePresets } from '../data/catalog'
 import { buildFrameFromPreset } from '../data/framePresetFactory'
 import { translate } from '../i18n'
-import type { CatalogItem, LanguageCode } from '../models/design'
+import type { LanguageCode, LegacyCatalogItem } from '../models/design'
 import { formatEstimatedPrice } from '../pricing/priceEngine'
 import { useDesign } from '../state/designState'
 import { projectRepository } from '../storage/projectRepository'
@@ -35,16 +35,16 @@ export function App() {
   const activeCatalogItemRef = useRef<string | null>(null)
   const t = (key: string) => translate(design.language, key)
   const orderedFrames = useMemo(
-    () => [...design.frames].sort((a, b) => a.orderIndex - b.orderIndex),
-    [design.frames],
+    () => [...design.furniture.frames].sort((a, b) => a.orderIndex - b.orderIndex),
+    [design.furniture.frames],
   )
   const selectedFrame = orderedFrames.find((frame) =>
-    (design.selectedItem?.kind === 'frame' && frame.id === design.selectedItem.id) ||
-    (design.selectedItem?.kind === 'component' && frame.components.some((component) => component.id === design.selectedItem?.id)) ||
-    (design.selectedItem?.kind === 'door' && frame.doors.some((door) => door.id === design.selectedItem?.id)),
+    (design.selectedObject?.objectType === 'frame' && frame.id === design.selectedObject.objectId) ||
+    (design.selectedObject?.objectType === 'component' && frame.components.some((component) => component.id === design.selectedObject?.objectId)) ||
+    (design.selectedObject?.objectType === 'door' && frame.doors.some((door) => door.id === design.selectedObject?.objectId)),
   ) ?? null
-  const selectedComponent = selectedFrame?.components.find((component) => component.id === design.selectedItem?.id) ?? null
-  const selectedDoor = selectedFrame?.doors.find((door) => door.id === design.selectedItem?.id) ?? null
+  const selectedComponent = selectedFrame?.components.find((component) => component.id === design.selectedObject?.objectId) ?? null
+  const selectedDoor = selectedFrame?.doors.find((door) => door.id === design.selectedObject?.objectId) ?? null
   const totalWidth = orderedFrames.reduce((sum, frame) => sum + frame.widthMm, 0)
   const maximumHeight = orderedFrames.reduce((max, frame) => Math.max(max, frame.heightMm), 0)
   const maximumDepth = orderedFrames.reduce((max, frame) => Math.max(max, frame.depthMm), 0)
@@ -60,8 +60,8 @@ export function App() {
   const componentIssues = selectedComponent ? validation.filter((issue) => issue.targetId === selectedComponent.id) : []
   const totalComponents = orderedFrames.reduce((sum, frame) => sum + frame.components.length, 0)
 
-  const addFrameFromPreset = (preset: CatalogItem) => {
-    const frame = buildFrameFromPreset(preset, design.frames.length)
+  const addFrameFromPreset = (preset: LegacyCatalogItem) => {
+    const frame = buildFrameFromPreset(preset, design.furniture.frames.length)
     dispatch({ type: 'FRAME_ADD', frame })
     setMobilePanel('inspector')
   }
@@ -267,7 +267,7 @@ export function App() {
                   <ComponentInspector frame={selectedFrame} component={selectedComponent} issues={componentIssues} t={t} />
                 ) : (
                   <>
-                    {design.selectedItem?.kind !== 'door' && <DimensionEditor frame={selectedFrame} frameIssues={frameIssues} isFirst={selectedFrame.orderIndex === 0} isLast={selectedFrame.orderIndex === orderedFrames.length - 1} />}
+                    {design.selectedObject?.objectType !== 'door' && <DimensionEditor frame={selectedFrame} frameIssues={frameIssues} isFirst={selectedFrame.orderIndex === 0} isLast={selectedFrame.orderIndex === orderedFrames.length - 1} />}
                     <InternalPresetPanel frame={selectedFrame} t={t} />
                     <DoorConfigurator frame={selectedFrame} issues={frameIssues} t={t} />
                     <div className="component-readiness">

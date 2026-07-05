@@ -19,6 +19,12 @@ export const componentGroups: ComponentGroupId[] = [
 ]
 
 export const componentCatalogMeta: Record<FurnitureComponentType, ComponentCatalogMeta> = {
+  'adjustable-shelf': { group: 'structure', icon: '-', descriptionKey: 'catalog.shelf.description', hintKey: 'catalog.hint.customWidth' },
+  'fixed-shelf': { group: 'structure', icon: '=', descriptionKey: 'catalog.shelf.description', hintKey: 'catalog.hint.customWidth' },
+  'glass-shelf': { group: 'structure', icon: '-', descriptionKey: 'catalog.shelf.description', hintKey: 'catalog.hint.customWidth' },
+  'display-shelf': { group: 'structure', icon: '-', descriptionKey: 'catalog.shelf.description', hintKey: 'catalog.hint.customWidth' },
+  'shallow-drawer': { group: 'drawers', icon: '=', descriptionKey: 'catalog.drawer.description', hintKey: 'catalog.hint.depth45' },
+  'mesh-basket': { group: 'drawers', icon: '#', descriptionKey: 'catalog.wireBasket.description', hintKey: 'catalog.hint.depth45' },
   shelf: { group: 'structure', icon: '━', descriptionKey: 'catalog.shelf.description', hintKey: 'catalog.hint.customWidth' },
   'vertical-divider': { group: 'structure', icon: '┃', descriptionKey: 'catalog.divider.description', hintKey: 'catalog.hint.fullHeight' },
   'top-cover-panel': { group: 'structure', icon: '▔', descriptionKey: 'catalog.topPanel.description', hintKey: 'catalog.hint.exterior' },

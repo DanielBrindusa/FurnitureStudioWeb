@@ -1,4 +1,4 @@
-import type { CatalogItem, Material } from '../models/design'
+import type { LegacyCatalogItem, Material } from '../models/design'
 
 const COMMON_DEPTHS = [350, 450, 580, 600]
 
@@ -23,7 +23,7 @@ export const boardMaterials = materials.filter((material) =>
   !['mirror', 'glass', 'metal', 'wire'].includes(material.finishType),
 )
 
-export const framePresets: CatalogItem[] = [
+export const framePresets: LegacyCatalogItem[] = [
   {
     id: 'frame-custom', sku: 'WS-FRAME-CUSTOM', name: 'Empty custom frame', type: 'frame', category: 'frames',
     dimensions: { widthMm: 1000, heightMm: 2400, depthMm: 580 }, compatibleDepths: COMMON_DEPTHS,
@@ -68,7 +68,7 @@ export const framePresets: CatalogItem[] = [
   },
 ]
 
-export const componentCatalog: CatalogItem[] = [
+export const componentCatalog: LegacyCatalogItem[] = [
   { id: 'shelf-standard', sku: 'WS-SHELF-STD', name: 'Shelf', type: 'shelf', category: 'interiors', dimensions: { heightMm: 24, depthMm: 550 }, compatibleDepths: COMMON_DEPTHS, minWidthMm: 200, maxWidthMm: 2070, minHeightMm: 24, maxHeightMm: 40, price: 1800, rules: { supportsCustomWidth: true } },
   { id: 'clothes-rail', sku: 'WS-RAIL-CLOTHES', name: 'Clothes rail', type: 'clothes-rail', category: 'interiors', dimensions: { heightMm: 30, depthMm: 30 }, compatibleDepths: [450, 580, 600], minWidthMm: 350, maxWidthMm: 1800, minHeightMm: 20, maxHeightMm: 50, price: 1600, rules: { hangingClearanceMm: 900 } },
   { id: 'drawer-standard', sku: 'WS-DRAWER-STD', name: 'Drawer', type: 'drawer', category: 'interiors', dimensions: { heightMm: 180, depthMm: 500 }, compatibleDepths: [450, 580, 600], minWidthMm: 350, maxWidthMm: 1200, minHeightMm: 140, maxHeightMm: 240, price: 6200, rules: { minimumDepthMm: 450 } },
@@ -91,7 +91,7 @@ export const componentCatalog: CatalogItem[] = [
   { id: 'knob-component', sku: 'WS-KNOB-GENERIC', name: 'Knob', type: 'knob', category: 'handles', dimensions: { widthMm: 34, heightMm: 34, depthMm: 28 }, compatibleDepths: COMMON_DEPTHS, minWidthMm: 20, maxWidthMm: 80, minHeightMm: 20, maxHeightMm: 80, price: 1200, rules: { doorHardware: true } },
 ]
 
-export const doorCatalog: CatalogItem[] = [
+export const doorCatalog: LegacyCatalogItem[] = [
   { id: 'door-open', sku: 'WS-DOOR-OPEN', name: 'Open wardrobe', type: 'open', category: 'doors', dimensions: {}, compatibleDepths: COMMON_DEPTHS, minWidthMm: 10, maxWidthMm: 2070, minHeightMm: 10, maxHeightMm: 2800, price: 0, rules: { requiresHandle: false } },
   { id: 'door-hinged', sku: 'WS-DOOR-HINGED', name: 'Hinged door', type: 'hinged', category: 'doors', dimensions: {}, compatibleDepths: COMMON_DEPTHS, minWidthMm: 300, maxWidthMm: 700, minHeightMm: 500, maxHeightMm: 2800, price: 8700, rules: { requiresHandle: true, minimumWidthMm: 300 } },
   { id: 'door-sliding', sku: 'WS-DOOR-SLIDING', name: 'Sliding door', type: 'sliding', category: 'doors', dimensions: {}, compatibleDepths: [580, 600], minWidthMm: 1000, maxWidthMm: 2070, minHeightMm: 1200, maxHeightMm: 2800, price: 17800, rules: { requiresHandle: false, minimumWidthMm: 1000 } },
@@ -102,7 +102,7 @@ export const doorCatalog: CatalogItem[] = [
   { id: 'door-framed-panel', sku: 'WS-DOOR-FRAMED', name: 'Framed panel door', type: 'framed-panel', category: 'doors', dimensions: {}, compatibleDepths: COMMON_DEPTHS, minWidthMm: 350, maxWidthMm: 1200, minHeightMm: 700, maxHeightMm: 2800, price: 12400, rules: { requiresHandle: true } },
 ]
 
-export const handleCatalog: CatalogItem[] = [
+export const handleCatalog: LegacyCatalogItem[] = [
   { id: 'slim-bar-handle', sku: 'WS-HANDLE-SLIM', name: 'Slim Bar Handle', type: 'handle', category: 'handles', dimensions: { widthMm: 192, heightMm: 14, depthMm: 28 }, compatibleDepths: COMMON_DEPTHS, minWidthMm: 80, maxWidthMm: 600, minHeightMm: 10, maxHeightMm: 40, price: 1900, rules: { doorTypes: ['hinged', 'mirror', 'glass-look', 'flat-panel', 'framed-panel'] } },
   { id: 'round-soft-knob', sku: 'WS-HANDLE-ROUND', name: 'Round Soft Knob', type: 'knob', category: 'handles', dimensions: { widthMm: 36, heightMm: 36, depthMm: 30 }, compatibleDepths: COMMON_DEPTHS, minWidthMm: 20, maxWidthMm: 80, minHeightMm: 20, maxHeightMm: 80, price: 1200, rules: { doorTypes: ['hinged', 'mirror', 'flat-panel', 'framed-panel'] } },
   { id: 'edge-pull-handle', sku: 'WS-HANDLE-EDGE', name: 'Edge Pull Handle', type: 'handle', category: 'handles', dimensions: { widthMm: 220, heightMm: 18, depthMm: 22 }, compatibleDepths: COMMON_DEPTHS, minWidthMm: 100, maxWidthMm: 900, minHeightMm: 10, maxHeightMm: 50, price: 2400, rules: { doorTypes: ['hinged', 'sliding', 'double-sliding', 'flat-panel'] } },
@@ -110,7 +110,7 @@ export const handleCatalog: CatalogItem[] = [
   { id: 'classic-pull-handle', sku: 'WS-HANDLE-CLASSIC', name: 'Classic Pull Handle', type: 'handle', category: 'handles', dimensions: { widthMm: 160, heightMm: 24, depthMm: 36 }, compatibleDepths: COMMON_DEPTHS, minWidthMm: 80, maxWidthMm: 500, minHeightMm: 15, maxHeightMm: 60, price: 2200, rules: { doorTypes: ['hinged', 'mirror', 'glass-look', 'framed-panel'] } },
 ]
 
-export const catalogItems: CatalogItem[] = [
+export const catalogItems: LegacyCatalogItem[] = [
   ...framePresets,
   ...componentCatalog,
   ...doorCatalog,
@@ -120,11 +120,11 @@ export const catalogItems: CatalogItem[] = [
 export const getMaterial = (materialId: string): Material | undefined =>
   materials.find((material) => material.id === materialId)
 
-export const getCatalogItem = (itemId: string): CatalogItem | undefined =>
+export const getCatalogItem = (itemId: string): LegacyCatalogItem | undefined =>
   catalogItems.find((item) => item.id === itemId)
 
-export const getCatalogItemByType = (type: CatalogItem['type']): CatalogItem | undefined =>
+export const getCatalogItemByType = (type: LegacyCatalogItem['type']): LegacyCatalogItem | undefined =>
   catalogItems.find((item) => item.type === type)
 
-export const getHandle = (handleId: string): CatalogItem | undefined =>
+export const getHandle = (handleId: string): LegacyCatalogItem | undefined =>
   handleCatalog.find((handle) => handle.id === handleId)
